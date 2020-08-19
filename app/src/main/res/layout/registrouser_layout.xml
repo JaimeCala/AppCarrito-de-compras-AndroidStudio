@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="16dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtCedulaUser"
+                    android:hint="Cédula de Identidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="number"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtExpedidoUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:text="Expedido"
+                        android:textColor="#1e1d1d"
+                        android:textSize="16sp" />
+                    <Spinner
+                        android:id="@+id/spinExpedidoUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+                </LinearLayout>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtNombreUser"
+                    android:hint="Nombres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtPaternoUser"
+                    android:hint="Apellido paterno"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtMaternoUser"
+                    android:hint="Apellido materno"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtCelularUser"
+                    android:hint="Número de celular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtDireccionUser"
+                    android:hint="Dirección"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtCiudaduser"
+                    android:hint="Ciudad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="text"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtSexoUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:text="Sexo"
+                        android:textColor="#161515"
+                        android:textSize="16sp" />
+
+                    <Spinner
+                        android:id="@+id/spinSexoUser"
+
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+
+                </LinearLayout>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtCorreoUser"
+                    android:hint="Correo electrónico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtPasswordUser"
+                    android:hint="Contraseña"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:inputType="textPassword"
+                    android:layout_marginLeft="10dp"
+                    app:met_floatingLabel="highlight"
+                    />
+
+
+
+                <Button
+                    android:id="@+id/btnRegistrarUser"
+                    style="?android:textAppearanceSmall"
+                    android:text="REGISTRAR"
+                    android:background="@drawable/blue_button_bg"
+                    android:textStyle="bold"
+                    android:textColor="#fff"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:textSize="18sp"
+                    android:layout_centerInParent="true" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

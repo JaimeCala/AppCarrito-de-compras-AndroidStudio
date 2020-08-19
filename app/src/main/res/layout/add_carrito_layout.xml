@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#7022ddca"
+
+    >
+
+    <LinearLayout
+        android:id="@+id/contenedor_dialog_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f6f3f3"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+        <ImageView
+            android:id="@+id/img_producto_cart_id"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/txt_dialogproducto_nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre producto"
+                android:textSize="18sp"
+                android:textColor="#0a0a0a"
+                android:textStyle="bold"
+                android:gravity="center"
+                />
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txt_precio_dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Preciounitario"
+                    android:textSize="18sp"
+                    android:textColor="#c31515"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    />
+
+
+
+                <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                    android:id="@+id/txt_count"
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    app:initialNumber="1"
+                    app:finalNumber="100"
+
+                    android:layout_alignParentRight="true"
+                    app:backGroundColor="#1c1d1d"/>
+
+
+            </RelativeLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

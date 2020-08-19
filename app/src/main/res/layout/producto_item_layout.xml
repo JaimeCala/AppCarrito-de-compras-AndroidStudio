@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview_productos_id"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_width="match_parent"
+    android:layout_height="330dp"
+    android:layout_margin="5dp"
+    cardview:contentPadding="5dp"
+    cardview:cardElevation="8dp"
+    cardview:cardBackgroundColor="@color/white"
+    cardview:cardUseCompatPadding="true"
+    cardview:cardCornerRadius="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/producto_img_id"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="#2d2d2d"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/txt_nombreProducto_id"
+            android:layout_width="match_parent"
+            android:layout_height="41dp"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Nombre ProductoO"
+            android:textStyle="bold"
+            android:textSize="15dp"
+            android:textColor="#0d0d0d"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_peso_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Peso"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:textColor="#0d0d0d"/>
+            <TextView
+                android:id="@+id/txt_unidad_id"
+                android:layout_width="wrap_content"
+                android:layout_height="29dp"
+                android:gravity="top"
+                android:text="Unidad"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:textColor="#0d0d0d"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txt_precio_id"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
+                android:background="@drawable/text_round"
+                android:text="Precio Nuevo"
+                android:textColor="#e30a0a"
+                android:textStyle="bold"
+                android:textSize="15dp"/>
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/boton_agregarCarrito_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_shopping_cart_black_24dp"
+
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:textSize="10sp"
+                android:layout_gravity="center_horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="botonAgregarCompra"/>
+
+            <ImageView
+                android:id="@+id/boton_favorito_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_favorite_border_white_24dp"
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:textSize="10sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="botonAgregarCompra"/>
+
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+</android.support.v7.widget.CardView>

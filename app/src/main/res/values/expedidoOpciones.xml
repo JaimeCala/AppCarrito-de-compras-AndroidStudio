@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="combo_expedido">
+
+        <item>Seleccione</item>
+        <item>CH</item>
+        <item>LP</item>
+        <item>CB</item>
+        <item>OR</item>
+        <item>PT</item>
+        <item>TJ</item>
+        <item>SC</item>
+        <item>BE</item>
+        <item>PD</item>
+
+
+
+    </string-array>
+
+</resources>
