@@ -178,6 +178,8 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                     //cartItem.nombre = txt_nombre_producto.getText().toString();
                     cartItem.nombre = categoriaProductoList.get(position).getProdunombre();
                     cartItem.amount = Integer.parseInt(txt_contador.getNumber());
+                    cartItem.cantidad = Integer.parseInt(txt_contador.getNumber());
+                    cartItem.producto = categoriaProductoList.get(position).getIdprodu();
                     //cartItem.precio = Double.parseDouble(lstproductos.get(position).precionuevo);
                     cartItem.precio = finalprice;
                     cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();

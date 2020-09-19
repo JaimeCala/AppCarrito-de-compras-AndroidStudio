@@ -28,6 +28,17 @@ public class Cart {
     @ColumnInfo(name = "amount")
     public  int amount;
 
+    @ColumnInfo(name = "cantidad")
+    public  int cantidad;
+
+    @ColumnInfo(name = "producto")
+    public  int producto;
+
+    /*@ColumnInfo(name = "pedido")
+    public  int pedido;*/
+
+
+
 
 
 

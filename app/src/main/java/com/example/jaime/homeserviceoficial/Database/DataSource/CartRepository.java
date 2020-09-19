@@ -39,7 +39,7 @@ public class CartRepository implements ICartDataSource{
     }
 
     @Override
-    public float sumPrecio() {
+    public double sumPrecio() {
         return iCartDataSource.sumPrecio();
     }
 

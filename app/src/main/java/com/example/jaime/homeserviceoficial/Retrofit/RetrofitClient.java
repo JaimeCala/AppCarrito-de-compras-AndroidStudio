@@ -3,6 +3,7 @@ package com.example.jaime.homeserviceoficial.Retrofit;
 import com.example.jaime.homeserviceoficial.Model.Categoria;
 import com.example.jaime.homeserviceoficial.Model.ImgCategoria;
 import com.example.jaime.homeserviceoficial.Model.ImgCategoriaDeserializer;
+import com.example.jaime.homeserviceoficial.Model.Pedido;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,7 +19,8 @@ public class RetrofitClient {
         if(retrofit==null)
         {
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(ImgCategoria.class,new ImgCategoriaDeserializer())
+                    //.registerTypeAdapter(Pedido.class,new ImgCategoriaDeserializer())
+                    .setLenient()
                     .create(); // para string para un solo elemento
 
             retrofit = new Retrofit.Builder()

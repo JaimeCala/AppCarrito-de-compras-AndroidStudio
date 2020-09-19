@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+
+
+    <TextView
+        android:id="@+id/edt_other_address"
+        android:text="Debe activar el GPS de su celular, para guardar su ubicaciòn, para que podamos entregar su pedido màs rapido. "
+        android:textSize="14sp"
+        android:enabled="false"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textColor="#181717"/>
+
+    <TextView
+        android:id="@+id/edt_other_address"
+        android:text="Debe permitir el acceso a su ubicaciòn por parte de la aplicaciòn, para un mejor servicio. "
+        android:textSize="14sp"
+        android:enabled="false"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textColor="#181717"/>
+
+</LinearLayout>

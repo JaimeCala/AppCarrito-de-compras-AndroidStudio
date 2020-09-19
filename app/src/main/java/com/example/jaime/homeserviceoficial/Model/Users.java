@@ -1,7 +1,7 @@
 package com.example.jaime.homeserviceoficial.Model;
 
 public class Users {
-
+    private int idusuario;
     private String ci;
     private String expedido;
     private String nombre;
@@ -16,6 +16,14 @@ public class Users {
 
 
     public Users() {
+    }
+
+    public int getIdusuario() {
+        return idusuario;
+    }
+
+    public void setIdusuario(int idusuario) {
+        this.idusuario = idusuario;
     }
 
     public String getCi() {

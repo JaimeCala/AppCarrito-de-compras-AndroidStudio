@@ -8,7 +8,7 @@ import android.content.Context;
 import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 import com.example.jaime.homeserviceoficial.Database.ModelDB.Favorite;
 
-@Database(entities = {Cart.class, Favorite.class},version = 1)
+@Database(entities = {Cart.class, Favorite.class},version = 1, exportSchema = false)
 public abstract class JCMRoomCartDatabase extends RoomDatabase {
 
     public abstract CartDAO cartDAO();

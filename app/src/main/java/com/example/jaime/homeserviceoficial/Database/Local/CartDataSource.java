@@ -38,7 +38,7 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
-    public float sumPrecio() {
+    public double sumPrecio() {
         return cartDAO.sumPrecio();
     }
 

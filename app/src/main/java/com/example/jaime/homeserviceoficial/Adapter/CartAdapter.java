@@ -63,6 +63,7 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.CartViewHolde
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
                 Cart cart = cartList.get(position);
                 cart.amount = newValue;
+                cart.cantidad = newValue;
                 cart.precio = Math.round(priceOne*newValue);
                 Common.cartRepository.upadateCart(cart);
                 Common.cartRepository.sumPrecio();
