@@ -15,6 +15,8 @@ public class CategoriaProductoViewHolder extends RecyclerView.ViewHolder impleme
     ImageView img_producto;
     TextView txt_nombreProducto,txt_pesoProducto,txt_unidadProducto,txt_precioProducto;
 
+    TextView txt_preci_sum;
+
     ItemClickListener itemClickListener;
 
     ImageView btn_add_to_cart,btn_favorito;
@@ -35,6 +37,9 @@ public class CategoriaProductoViewHolder extends RecyclerView.ViewHolder impleme
 
         btn_add_to_cart= itemView.findViewById(R.id.boton_agregarCarrito_id);
         btn_favorito= itemView.findViewById(R.id.boton_favorito_id);
+
+
+
 
 
 

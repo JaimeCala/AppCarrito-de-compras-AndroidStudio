@@ -97,7 +97,7 @@ public interface ICarritoShopAPI {
                              @Field("longitud") String longitud,
                              @Field("fecha") String fecha,
                              @Field("hora") String hora,
-                             @Field("estado") String estado,
+                             //@Field("estado") String estado,
                              @Field("cliente") int cliente,
                              @Field("comentario") String comentario,
                              @Field("direccion") String direccion,

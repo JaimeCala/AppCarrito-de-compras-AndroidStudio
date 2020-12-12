@@ -33,6 +33,21 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
+    public Flowable<List<Cart>> getCartItemByIdProducto(int idproducto) {
+        return cartDAO.getCartItemByIdProducto(idproducto);
+    }
+
+    @Override
+    public boolean getIdProducto(int idproducto) {
+        return cartDAO.getIdProducto(idproducto);
+    }
+
+    @Override
+    public void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p) {
+        cartDAO.updateProducto(  amount_p,  cantidad_p,  precio_p,  precio_total_p ,  idproducto_p);
+    }
+
+    @Override
     public int countCartItems() {
         return cartDAO.countCartItems();
     }

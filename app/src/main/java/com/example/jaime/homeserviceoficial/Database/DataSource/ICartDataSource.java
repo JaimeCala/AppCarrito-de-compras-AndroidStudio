@@ -10,6 +10,9 @@ public interface ICartDataSource {
 
     Flowable<List<Cart>> getCartItem();
     Flowable<List<Cart>> getCartItemById(int carItemId);
+    Flowable<List<Cart>> getCartItemByIdProducto(int idproducto);
+    boolean getIdProducto(int idproducto);
+    void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p);
     int countCartItems();
     double sumPrecio();
     void  emptyCart();

@@ -69,6 +69,17 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/txt_precio_suma_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preci_sum"
+                android:textSize="18sp"
+                android:textColor="#c31515"
+                android:textStyle="bold"
+                android:gravity="center"
+                />
+
 
 
 

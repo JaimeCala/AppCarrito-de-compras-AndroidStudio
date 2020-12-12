@@ -34,6 +34,12 @@ public class Cart {
     @ColumnInfo(name = "producto")
     public  int producto;
 
+    @ColumnInfo(name = "precio_uni")
+    public  double precio_uni;
+
+    @ColumnInfo(name = "precio_total")
+    public  double precio_total;
+
     /*@ColumnInfo(name = "pedido")
     public  int pedido;*/
 

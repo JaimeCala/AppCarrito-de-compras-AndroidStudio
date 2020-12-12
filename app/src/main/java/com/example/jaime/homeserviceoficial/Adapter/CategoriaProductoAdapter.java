@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import retrofit2.Converter;
 
 public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProductoViewHolder> {
@@ -32,7 +33,15 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
     Context context;
     List<CategoriaProducto> categoriaProductoList;
 
+    List<Cart> cartList;
+
+
+
     String url= "api/img-producto/";
+
+    public CategoriaProductoAdapter(List<Cart> cartList) {
+        this.cartList = cartList;
+    }
 
     public CategoriaProductoAdapter(Context context, List<CategoriaProducto> categoriaProductoList) {
         this.context = context;
@@ -134,7 +143,7 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
         final TextView txt_nombre_producto = view.findViewById(R.id.txt_dialogproducto_nombre);
         final TextView txt_precio_dialog = view.findViewById(R.id.txt_precio_dialog);
 
-        //TextView txt_preciocart = view.findViewById(R.id.txt_cart_product_precioUnidad);
+        final TextView txt_precio_sum = view.findViewById(R.id.txt_precio_suma_dialog);
 
 
 
@@ -143,7 +152,17 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                 .load(Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu())
                 .into(img_producto_dialog);
         txt_nombre_producto.setText(categoriaProductoList.get(position).getProdunombre());
-        txt_precio_dialog.setText(new StringBuilder("BS.").append(categoriaProductoList.get(position).getProduprecio()).toString());
+        txt_precio_dialog.setText(new StringBuilder("Bs.").append(categoriaProductoList.get(position).getProduprecio()).toString());
+
+        txt_precio_sum.setText(new StringBuilder("Total: ").append(categoriaProductoList.get(position).getProduprecio()).append("Bs."));
+
+        //-------------------------------escuchando contador al cambio-------//
+        txt_contador.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
+            @Override
+            public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+                txt_precio_sum.setText(new StringBuilder("Total: ").append(categoriaProductoList.get(position).getProduprecio()*newValue).append("Bs."));
+            }
+        });
 
 
         builder.setView(view);
@@ -168,37 +187,149 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                 final double finalprice = Math.round(price);
                 //Toast.makeText(context, "Se agrego al carrito"+finalprice, Toast.LENGTH_SHORT).show();
 
-
-                try {
-
-
-                    //crear nuevo cart
-
-                    Cart cartItem = new Cart();
-                    //cartItem.nombre = txt_nombre_producto.getText().toString();
-                    cartItem.nombre = categoriaProductoList.get(position).getProdunombre();
-                    cartItem.amount = Integer.parseInt(txt_contador.getNumber());
-                    cartItem.cantidad = Integer.parseInt(txt_contador.getNumber());
-                    cartItem.producto = categoriaProductoList.get(position).getIdprodu();
-                    //cartItem.precio = Double.parseDouble(lstproductos.get(position).precionuevo);
-                    cartItem.precio = finalprice;
-                    cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
-
-
-                    //Adicionar la base de datos
-
-                    Common.cartRepository.insertToCart(cartItem);
-                    Log.d("JCM_DEBUG",new Gson().toJson(cartItem));
+                //-------------comprobar si hay ya el producto en room y si hay sumarlo o de lo contrario agregar cart------///
+                int exitsItem = Common.cartRepository.countCartItems();
+                final int idproducto = categoriaProductoList.get(position).getIdprodu();
 
 
 
-                    Toast.makeText(context, "Se agrego al carrito", Toast.LENGTH_SHORT).show();
+                if(exitsItem>0){
 
+
+
+                    boolean exist_id = Common.cartRepository.getIdProducto(idproducto);
+                    Log.d("existe_idproducto", String.valueOf(exist_id));
+
+                    if( exist_id){
+                        try {
+                            //cartList.get(position).producto==
+
+                            //sumar a cart existentes
+
+
+                                    Common.cartRepository.updateProducto(
+                                            Integer.parseInt(txt_contador.getNumber()),
+                                            Integer.parseInt(txt_contador.getNumber()),
+                                            finalprice,
+                                            finalprice,
+                                            idproducto
+
+
+                                    );
+
+
+                            /*Cart cartItem = new Cart();
+                            //cartItem.nombre = txt_nombre_producto.getText().toString();
+                            //cartItem.nombre = categoriaProductoList.get(position).getProdunombre();
+                            cartItem.amount = cartList.get(position).amount+ Integer.parseInt(txt_contador.getNumber());
+                            cartItem.cantidad = cartList.get(position).cantidad+Integer.parseInt(txt_contador.getNumber());
+                            //cartItem.producto = categoriaProductoList.get(position).getIdprodu();
+                            //cartItem.precio = Double.parseDouble(lstproductos.get(position).precionuevo);
+                            cartItem.precio = cartList.get(position).precio+ finalprice;
+                            //cartItem.precio_uni =  categoriaProductoList.get(position).getProduprecio();
+                            cartItem.precio_total = cartList.get(position).precio_total+ finalprice;
+                            //cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
+
+
+                            //Adicionar la base de datos
+
+                            Common.cartRepository.upadateCart(cartItem);
+                            Log.d("JCM_DEBUG",new Gson().toJson(cartItem));*/
+
+
+
+                            Toast.makeText(context, "Se actualizo el carrito", Toast.LENGTH_SHORT).show();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+
+
+                    }else {
+
+                        boolean existe = Boolean.parseBoolean(String.valueOf(Common.cartRepository.getCartItemByIdProducto(idproducto )) );
+                        Log.d("EXISTE_NO", String.valueOf(existe)  );
+
+                        //----------------------sino existe crea item----------//
+                        try {
+
+
+                            //crear nuevo cart
+
+                            Cart cartItem = new Cart();
+                            //cartItem.nombre = txt_nombre_producto.getText().toString();
+                            cartItem.nombre = categoriaProductoList.get(position).getProdunombre();
+                            cartItem.amount = Integer.parseInt(txt_contador.getNumber());
+                            cartItem.cantidad = Integer.parseInt(txt_contador.getNumber());
+                            cartItem.producto = categoriaProductoList.get(position).getIdprodu();
+                            //cartItem.precio = Double.parseDouble(lstproductos.get(position).precionuevo);
+                            cartItem.precio = finalprice;
+                            cartItem.precio_uni = categoriaProductoList.get(position).getProduprecio();
+                            cartItem.precio_total = finalprice;
+                            cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
+
+
+                            //Adicionar la base de datos
+
+                            Common.cartRepository.insertToCart(cartItem);
+                            Log.d("JCM_DEBUG",new Gson().toJson(cartItem));
+
+
+
+                            Toast.makeText(context, "Se agrego al carrito", Toast.LENGTH_SHORT).show();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+
+
+
+
+
+                }else {
+
+                    try {
+
+
+                        //crear nuevo cart
+
+                        Cart cartItem = new Cart();
+                        //cartItem.nombre = txt_nombre_producto.getText().toString();
+                        cartItem.nombre = categoriaProductoList.get(position).getProdunombre();
+                        cartItem.amount = Integer.parseInt(txt_contador.getNumber());
+                        cartItem.cantidad = Integer.parseInt(txt_contador.getNumber());
+                        cartItem.producto = categoriaProductoList.get(position).getIdprodu();
+                        //cartItem.precio = Double.parseDouble(lstproductos.get(position).precionuevo);
+                        cartItem.precio = finalprice;
+                        cartItem.precio_uni = categoriaProductoList.get(position).getProduprecio();
+                        cartItem.precio_total = finalprice;
+                        cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
+
+
+                        //Adicionar la base de datos
+
+                        Common.cartRepository.insertToCart(cartItem);
+                        Log.d("JCM_DEBUG",new Gson().toJson(cartItem));
+
+
+
+                        Toast.makeText(context, "Se agrego al carrito", Toast.LENGTH_SHORT).show();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+
+
 
 
             }

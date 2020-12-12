@@ -2,6 +2,7 @@ package com.example.jaime.homeserviceoficial.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.example.jaime.homeserviceoficial.CartActivity;
 import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 import com.example.jaime.homeserviceoficial.R;
 import com.example.jaime.homeserviceoficial.Utils.Common;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -46,10 +48,11 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.CartViewHolde
                 .into(holder.img_producto);
 
         holder.txt_cart_amount.setNumber(String.valueOf(cartList.get(position).amount));
-        holder.txt_cart_precioUnitario.setText(new StringBuilder("BS.").append(cartList.get(position).precio));
+        holder.txt_cart_precioUnitario.setText(new StringBuilder("BS.").append(cartList.get(position).precio_uni));
         holder.txt_cart_producto_nombre.setText(cartList.get(position).nombre);
+
         //holder.txt_cart_precioSumado.setText(String.valueOf(Common.cartRepository.sumPrecio()));
-        //holder.txt_cart_precioSumado.setText(new StringBuilder("Total: ").append(Common.cartRepository.sumPrecio()).append(" BS."));
+        holder.txt_cart_precioSumado.setText(new StringBuilder("Total: ").append(cartList.get(position).precio_total).append(" BS."));
 
 
         //traer precio de un producto
@@ -65,14 +68,18 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.CartViewHolde
                 cart.amount = newValue;
                 cart.cantidad = newValue;
                 cart.precio = Math.round(priceOne*newValue);
+                cart.precio_uni = cartList.get(position).precio_uni;
+                cart.precio_total = Math.round(priceOne*newValue);
                 Common.cartRepository.upadateCart(cart);
                 Common.cartRepository.sumPrecio();
 
-
+                Log.d("JCM_DEBUG_CART",new Gson().toJson(cart));
 
                 Toast.makeText(cartActivity, "Precio Total :"+Common.cartRepository.sumPrecio(), Toast.LENGTH_SHORT).show();
 
-                holder.txt_cart_precioUnitario.setText(new StringBuilder("BS.").append(cartList.get(position).precio));
+                //holder.txt_cart_precioUnitario.setText(new StringBuilder("BS.").append(cartList.get(position).precio));
+
+                holder.txt_cart_precioSumado.setText(new StringBuilder("Total: ").append(priceOne*newValue).append("Bs."));
 
 
 
@@ -119,8 +126,8 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.CartViewHolde
             view_background = itemView.findViewById(R.id.view_background);
             view_foreground = itemView.findViewById(R.id.view_foreground);
 
-
-            txt_cart_precioSumado = itemView.findViewById(R.id.txt_preciototal_cart);
+            //----precio de todos los productos en general----/
+            txt_cart_precioSumado = itemView.findViewById(R.id.txt_cart_product_precioSumados);
         }
     }
 

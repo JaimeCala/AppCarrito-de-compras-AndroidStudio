@@ -21,6 +21,18 @@ public interface CartDAO {
     @Query("SELECT * FROM cart WHERE id=:cartItemId")
     Flowable<List<Cart>> getCartItemById(int cartItemId);
 
+    @Query("SELECT * FROM cart  WHERE producto=:idproducto")
+    Flowable<List<Cart>> getCartItemByIdProducto(int idproducto);
+
+    @Query("SELECT * FROM cart  WHERE producto=:idproducto")
+    boolean getIdProducto(int idproducto);
+    //
+
+
+
+    @Query("UPDATE cart SET amount =:amount_p+amount,cantidad =:cantidad_p+cantidad, precio=:precio_p+precio, precio_total =:precio_total_p+precio_total WHERE producto=:idproducto_p")
+    void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p);
+
     @Query("SELECT COUNT(*) FROM cart ")
     int countCartItems();
 

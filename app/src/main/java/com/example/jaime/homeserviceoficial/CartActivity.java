@@ -323,7 +323,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     final String currentTime = simpleDateFormat2.format(new Date());
 
                     //declarar estado
-                    final String estado = "proceso";
+                    //final String estado = "proceso";
                     final int idcliente=0;
                     // final String latitude ="",  longitude="";
                     // final String currentDate="",currentTime="";
@@ -356,7 +356,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                                             //guardar pedido al servidor
                                                             //GuardarPedidoToServer(latitude, longitude,currentDate,currentTime,estado, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
 
-                                                            Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime,estado, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
+                                                            Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
                                                             pedidoCall.enqueue(new Callback<Pedido>() {
                                                                 @Override
                                                                 public void onResponse(Call<Pedido> call, Response<Pedido> response) {
