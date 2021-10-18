@@ -15,6 +15,7 @@ public interface ICartDataSource {
     void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p);
     int countCartItems();
     double sumPrecio();
+    double getPrecioTotal();
     void  emptyCart();
     void insertToCart(Cart...carts);
     void upadateCart(Cart...carts);

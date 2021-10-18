@@ -20,13 +20,14 @@ public class Pedido {
     @Expose
     private String longitud;
 
-    @SerializedName("fecha")
+    /*@SerializedName("fecha")
     @Expose
     private Date fecha;
 
     @SerializedName("hora")
     @Expose
     private Date hora;
+
 
     @SerializedName("estado")
     @Expose
@@ -46,19 +47,27 @@ public class Pedido {
 
     @SerializedName("precio")
     @Expose
-    private double precio;
+    private double precio;*/
 
-    public Pedido(int idpedido, String latitud, String longitud, Date fecha, Date hora, String estado, int idcliente, String comentario,String direccion,double precio) {
+
+
+
+
+    public Pedido(int idpedido, String latitud, String longitud
+            //, Date fecha, Date hora, String estado, int idcliente, String comentario, String direccion
+                  //double precio
+
+    ) {
         this.idpedido = idpedido;
         this.latitud = latitud;
         this.longitud = longitud;
-        this.fecha = fecha;
+        /*this.fecha = fecha;
         this.hora = hora;
         this.estado = estado;
         this.idcliente = idcliente;
         this.comentario = comentario;
-        this.direccion = direccion;
-        this.precio = precio;
+        this.direccion = direccion;*/
+        //this.precio = precio;
     }
 
     public int getIdpedido() {
@@ -85,7 +94,7 @@ public class Pedido {
         this.longitud = longitud;
     }
 
-    public Date getFecha() {
+    /*public Date getFecha() {
         return fecha;
     }
 
@@ -139,5 +148,7 @@ public class Pedido {
 
     public void setPrecio(double precio) {
         this.precio = precio;
-    }
+    }*/
+
+
 }

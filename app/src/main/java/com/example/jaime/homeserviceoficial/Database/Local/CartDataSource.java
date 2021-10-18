@@ -58,6 +58,11 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
+    public double getPrecioTotal() {
+        return cartDAO.getPrecioTotal();
+    }
+
+    @Override
     public void emptyCart() {
         cartDAO.emptyCart();
     }

@@ -176,6 +176,12 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
             @Override
             public void onClick(View v) {
                 enviarOrden();
+                //eliminamos productos agregados al carrito
+                //Common.cartRepository.emptyCart();
+                //cambiamos de actividad
+                //startActivity(new Intent(CartActivity.this,HomeActivity.class));
+                //finish();
+
             }
         });
 
@@ -190,7 +196,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
 
     public void enviarOrden() {
-
+/*--------------------------------------------------
         //comprobamos si esta activado el gps
         ubicacion = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         //Inicializamos gps para actualizar cada instante
@@ -211,13 +217,14 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
         //ubicacion = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+ /*---------------------------------------------------
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                        /* ActivityCompat.requestPermissions(CartActivity.this,new String[]{
                                 Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION
                         },1000);*/
-            } else {
+ /*-------------------------- } else {
                 location = ubicacion.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 //ubicacion.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, localizacion);
 
@@ -229,7 +236,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         location = ubicacion.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         //ubicacion.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, localizacion);
 
-
+----------------------------------*/
 
         /*if(location!=null)
         {
@@ -281,6 +288,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
             }
         });
 
+
         builder.setView(submit_order_layout);
         builder.setNegativeButton("CANCELAR:", new DialogInterface.OnClickListener() {
             @Override
@@ -310,8 +318,11 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
 
 
-                    final String latitude = String.valueOf(location.getLatitude());
-                    final String longitude = String.valueOf(location.getLongitude());
+                    /*final String latitude = String.valueOf(location.getLatitude());
+                    final String longitude = String.valueOf(location.getLongitude());*/
+
+                    final String latitude = "sinconexion";
+                    final String longitude = "sinconexion";
 
                     Toast.makeText(CartActivity.this, "latitud"+latitude, Toast.LENGTH_SHORT).show();
                     Toast.makeText(CartActivity.this, "longitud"+longitude, Toast.LENGTH_SHORT).show();
@@ -325,38 +336,39 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     //declarar estado
                     //final String estado = "proceso";
                     final int idcliente=0;
-                    // final String latitude ="",  longitude="";
-                    // final String currentDate="",currentTime="";
-                    //final int  pedido = 6;
-                    //submit order
+
+
+
                     compositeDisposable.add(
                             Common.cartRepository.getCartItem()
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribeOn(Schedulers.io())
-                                    .subscribe(new Consumer<List<Cart>>() {
-                                        @Override
-                                        public void accept( final List<Cart> carts) throws Exception {
+                                    .subscribe(Cart -> {
+
                                             if(!TextUtils.isEmpty(orderAddress)) {
 
 
-                                                //=================================================================
-                                                 mService.createCliente(Common.currentUser.getIdusuario()).enqueue(new Callback<Cliente>() {
-                                                    @Override
-                                                    public void onResponse(Call<Cliente> call, Response<Cliente> response) {
-
-                                                        Common.currentCliente = response.body();
-
+                                                //=====================guardar cliente============================================
+                                                compositeDisposable.add(
+                                                        mService.createCliente(Common.currentUser.getIdusuario()).enqueue(new Callback<Cliente>() {
+                                                            @Override
+                                                            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
 
 
-                                                        if(Common.currentCliente.getIdcliente()>0)
-                                                        {
-                                                            Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
 
-                                                            //==================================================================================================================
-                                                            //guardar pedido al servidor
-                                                            //GuardarPedidoToServer(latitude, longitude,currentDate,currentTime,estado, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
+                                                                Common.currentCliente = response.body();
 
-                                                            Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
+                                                                int contadorejecucion = 0;
+
+                                                                if(Common.currentCliente.getIdcliente()>0 && contadorejecucion ==0)
+                                                                {
+                                                                    Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
+
+                                                                    //==================================================================================================================
+                                                                    //guardar pedido al servidor
+                                                                    GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.getPrecioTotal());
+
+                                                        /*    Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
                                                             pedidoCall.enqueue(new Callback<Pedido>() {
                                                                 @Override
                                                                 public void onResponse(Call<Pedido> call, Response<Pedido> response) {
@@ -366,44 +378,8 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                                                     if(Common.currentPedido.getIdpedido()>0)
                                                                     {
                                                                         Toast.makeText(CartActivity.this, "el ID pedido========>>"+Common.currentPedido.getIdpedido(), Toast.LENGTH_SHORT).show();
+                                                                        GuardarPedidoProductoToServer(carts);
 
-                                                                        //===============================================================================================
-                                                                        //guardar datos de pedido producto
-                                                                        //List<Cart> carts1;
-
-                                                                                /*String cart = new Gson().toJson( cartList);
-                                                                                Log.d("JCM_DEBUG",cart);
-
-
-                                                                                Gson gson = new Gson();
-
-
-                                                                                Cart[] jsonob = gson.fromJson(cart,Cart[].class);
-
-                                                                                //int idpedidos= Common.currentPedido.getIdpedido();
-
-
-                                                                                mService.createPedidoProducto(jsonob).enqueue(new Callback<PedidoProducto>() {
-                                                                                    @Override
-                                                                                    public void onResponse(Call<PedidoProducto> call, Response<PedidoProducto> response) {
-
-                                                                                        Toast.makeText(CartActivity.this, "Pedido enviado", Toast.LENGTH_SHORT).show();
-
-
-                                                                                        //limpiar cart
-                                                                                        Common.cartRepository.emptyCart();
-
-                                                                                    }
-
-                                                                                    @Override
-                                                                                    public void onFailure(Call<PedidoProducto> call, Throwable t) {
-
-                                                                                        Log.e("ERROR",t.getMessage());
-
-                                                                                    }
-                                                                                });*/
-
-                                                                        //===============================================================================================
 
                                                                     }else{
                                                                         Toast.makeText(CartActivity.this, "Error al obtener ID pedido"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
@@ -413,12 +389,85 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                                                 @Override
                                                                 public void onFailure(Call<Pedido> call, Throwable t) {
-                                                                    Log.e("ERROR",t.getMessage());
+                                                                    Log.e("ERROR->>",t.getMessage());
                                                                     //Toast.makeText(CartActivity.this, "fallloooo la respuesta========>>", Toast.LENGTH_SHORT).show();
-                                                                    GuardarPedidoProductoToServer(carts);
+                                                                    //GuardarPedidoProductoToServer(carts);
 
                                                                 }
                                                             });
+
+                                                            contadorejecucion = contadorejecucion+1;*/
+
+
+
+                                                                    //===================================================================================================================
+
+                                                                }else{
+                                                                    Toast.makeText(CartActivity.this, "no hay nada en id cliente", Toast.LENGTH_SHORT).show();
+
+                                                                }
+
+
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<Cliente> call, Throwable t) {
+
+                                                            }
+                                                        })
+                                                                .observeOn(AndroidSchedulers.mainThread())
+                                                                .subscribeOn(Schedulers.io())
+                                                                .subscribe(Cliente ->{
+
+                                                                },throwable -> {}) );
+
+                                                 mService.createCliente(Common.currentUser.getIdusuario()).enqueue(new Callback<Cliente>() {
+                                                    @Override
+                                                    public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+
+
+
+                                                        Common.currentCliente = response.body();
+
+                                                        int contadorejecucion = 0;
+
+                                                        if(Common.currentCliente.getIdcliente()>0 && contadorejecucion ==0)
+                                                        {
+                                                            Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
+
+                                                            //==================================================================================================================
+                                                            //guardar pedido al servidor
+                                                            GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.getPrecioTotal());
+
+                                                        /*    Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
+                                                            pedidoCall.enqueue(new Callback<Pedido>() {
+                                                                @Override
+                                                                public void onResponse(Call<Pedido> call, Response<Pedido> response) {
+                                                                    Common.currentPedido = response.body();
+                                                                    Toast.makeText(CartActivity.this, "insertado pedido========>>", Toast.LENGTH_SHORT).show();
+
+                                                                    if(Common.currentPedido.getIdpedido()>0)
+                                                                    {
+                                                                        Toast.makeText(CartActivity.this, "el ID pedido========>>"+Common.currentPedido.getIdpedido(), Toast.LENGTH_SHORT).show();
+                                                                        GuardarPedidoProductoToServer(carts);
+
+
+                                                                    }else{
+                                                                        Toast.makeText(CartActivity.this, "Error al obtener ID pedido"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
+                                                                    }
+
+                                                                }
+
+                                                                @Override
+                                                                public void onFailure(Call<Pedido> call, Throwable t) {
+                                                                    Log.e("ERROR->>",t.getMessage());
+                                                                    //Toast.makeText(CartActivity.this, "fallloooo la respuesta========>>", Toast.LENGTH_SHORT).show();
+                                                                    //GuardarPedidoProductoToServer(carts);
+
+                                                                }
+                                                            });
+
+                                                            contadorejecucion = contadorejecucion+1;*/
 
 
 
@@ -437,7 +486,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                                     }
                                                 });
-                                                //=================================================================
+                                                //=========================fin cliente========================================
 
                                                 //GuardarClienteToServer(Common.currentUser.getIdusuario());
                                                 //==//no//==GuardarPedidoToServer(latitude, longitude,currentDate,currentTime,estado, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
@@ -453,11 +502,17 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                             //Common.cartRepository.emptyCart();
 
-                                        }
-                                    })
+
+                                    }, throwable -> {})
 
                     );
 
+                    //eliminamos productos agregados al carrito
+                    //Common.cartRepository.emptyCart();
+                    //cambiamos de actividad
+                    //startActivity(new Intent(CartActivity.this,HomeActivity.class));
+                    //finish();
+                    //Common.cartRepository.emptyCart();
 
                 }else {
                     Toast.makeText(CartActivity.this, "No tiene acceso a datos de  internet", Toast.LENGTH_SHORT).show();
@@ -471,73 +526,55 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
         AlertDialog dialog =  builder.show();
 
-        if(!gpsEnabled || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED))
+        /*if(!gpsEnabled || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED))
         {
            // AlertDialog dialog = builder.create();
 
             (dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
-        }
+        }*/
 
-
+        //probando vaciado de cart
+        //Common.cartRepository.emptyCart();
+        //startActivity(new Intent(CartActivity.this,HomeActivity.class));
+        //finish();
 
 
     }
 
-    /*private void GuardarClienteToServer(int idusuario) {
 
-        mService.createCliente(idusuario).enqueue(new Callback<Cliente>() {
+
+    private void GuardarPedidoToServer(String latitude, String longitude, String currentDate, String currentTime,  int idcliente, String orderComment, String orderAddress, double precio) {
+
+        Call<Pedido> pedidoCall = mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.getPrecioTotal());
+        pedidoCall.enqueue(new Callback<Pedido>() {
             @Override
-            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+            public void onResponse(Call<Pedido> call, Response<Pedido> response) {
+                Common.currentPedido = response.body();
+                Toast.makeText(CartActivity.this, "insertado pedido========>>", Toast.LENGTH_SHORT).show();
 
-                Common.currentCliente = response.body();
-
-
-
-                if(Common.currentCliente.getIdcliente()>0)
+                if(Common.currentPedido.getIdpedido()>0)
                 {
-                    Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CartActivity.this, "el ID pedido========>>"+Common.currentPedido.getIdpedido(), Toast.LENGTH_SHORT).show();
+                    GuardarPedidoProductoToServer(cartList);
+
 
                 }else{
-                    Toast.makeText(CartActivity.this, "no hay nada en id cliente", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(CartActivity.this, "Error al obtener ID pedido"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
                 }
-
 
             }
 
             @Override
-            public void onFailure(Call<Cliente> call, Throwable t) {
+            public void onFailure(Call<Pedido> call, Throwable t) {
+                Log.e("ERROR->>",t.getMessage());
+                //Toast.makeText(CartActivity.this, "fallloooo la respuesta========>>", Toast.LENGTH_SHORT).show();
+                //GuardarPedidoProductoToServer(carts);
 
             }
         });
-    }*/
+    }
 
-    /*private void GuardarPedidoToServer(String latitude, String longitude, String currentDate, String currentTime, String estado, int idcliente, String orderComment, String orderAddress, double precio) {
-
-
-
-        mService.createPedido(latitude, longitude,currentDate,currentTime,estado, idcliente, orderComment, orderAddress, precio)
-                .enqueue(new Callback<Pedido>() {
-                    @Override
-                    public void onResponse(Call<Pedido> call, Response<Pedido> response) {
-
-                        Common.currentPedido = response.body();
-
-                        Toast.makeText(CartActivity.this, "Se inserto el id usuario", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Pedido> call, Throwable t) {
-
-                        Log.e("ERROR",t.getMessage());
-
-                    }
-                });
-
-
-    }*/
 
     private void GuardarPedidoProductoToServer(List<Cart> carts) {
 
@@ -559,11 +596,17 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
            public void onResponse(Call<List<PedidoProducto>> call, Response<List<PedidoProducto>> response) {
 
                Toast.makeText(CartActivity.this, "Pedido enviado", Toast.LENGTH_SHORT).show();
-               Common.currentPedidoProducto= response.body();
+               //Common.currentPedidoProducto= response.body();
 
 
                //limpiar cart
                //Common.cartRepository.emptyCart(); si se ejecuta duplica registro en la base de datos
+               //eliminamos productos agregados al carrito
+               //Common.cartRepository.emptyCart();
+               //cambiamos de actividad
+               //startActivity(new Intent(CartActivity.this,HomeActivity.class));
+               //finish();
+               //Common.cartRepository.emptyCart();
 
            }
 

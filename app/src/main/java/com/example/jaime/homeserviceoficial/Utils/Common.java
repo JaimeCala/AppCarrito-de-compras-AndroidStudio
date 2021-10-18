@@ -7,6 +7,7 @@ import com.example.jaime.homeserviceoficial.Database.Local.JCMRoomCartDatabase;
 import com.example.jaime.homeserviceoficial.Model.Categoria;
 import com.example.jaime.homeserviceoficial.Model.CategoriaProducto;
 import com.example.jaime.homeserviceoficial.Model.Cliente;
+import com.example.jaime.homeserviceoficial.Model.Pedid;
 import com.example.jaime.homeserviceoficial.Model.Pedido;
 import com.example.jaime.homeserviceoficial.Model.PedidoProducto;
 import com.example.jaime.homeserviceoficial.Model.Producto;
@@ -21,7 +22,7 @@ import java.util.List;
 public class Common {
 
     //private static final String BASE_URL = "http://192.168.43.34:3000/api/";
-    public static final String BASE_URL = "http://192.168.43.34:3000/";
+    public static final String BASE_URL = "http://192.168.0.11:3000/";
 
     public static Users currentUser = null;
 
@@ -32,6 +33,9 @@ public class Common {
     public static CategoriaProducto currentCategoriaProducto = null;
 
     public static Pedido currentPedido = null;
+
+    //probando para que regrese response correctamente
+    //public static Pedid currentPedid = null;
 
     public static List<PedidoProducto> currentPedidoProducto = null;
 

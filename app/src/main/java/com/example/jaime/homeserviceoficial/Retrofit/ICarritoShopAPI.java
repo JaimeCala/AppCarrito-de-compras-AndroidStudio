@@ -87,7 +87,7 @@ public interface ICarritoShopAPI {
     //endpoent para insertar to db cliente
     @FormUrlEncoded
     @POST("api/cliente/create")
-    Call<Cliente> createCliente(@Field("user") int usuario);
+    Observable<Cliente> createCliente(@Field("user") int usuario);
 
     //insertamos pedidos
 

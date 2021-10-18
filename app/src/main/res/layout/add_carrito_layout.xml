@@ -54,8 +54,6 @@
                     android:gravity="center"
                     />
 
-
-
                 <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
                     android:id="@+id/txt_count"
                     android:layout_width="80dp"
