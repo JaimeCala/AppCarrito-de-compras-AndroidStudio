@@ -10,7 +10,9 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface CartDAO {
@@ -42,8 +44,8 @@ public interface CartDAO {
     @Query("SELECT precio_total FROM cart")
     double getPrecioTotal();
 
-    @Query("DELETE FROM Cart")
-    void emptyCart();
+    @Query("DELETE FROM Cart WHERE id=:idcart")
+    Completable< Integer>  emptyCart(int idcart);
 
     @Insert
     void insertToCart(Cart...carts);

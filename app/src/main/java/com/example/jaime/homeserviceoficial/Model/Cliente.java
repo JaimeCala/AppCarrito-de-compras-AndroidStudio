@@ -5,6 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Cliente {
 
+
+
+    private boolean success;
+
     @SerializedName("idcliente")
     @Expose
     private int idcliente;
@@ -32,5 +36,13 @@ public class Cliente {
 
     public void setIdusuario(int idusuario) {
         this.idusuario = idusuario;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 }

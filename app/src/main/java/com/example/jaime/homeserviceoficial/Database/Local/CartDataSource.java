@@ -5,7 +5,9 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class CartDataSource implements ICartDataSource {
     private CartDAO cartDAO;
@@ -63,8 +65,8 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
-    public void emptyCart() {
-        cartDAO.emptyCart();
+    public Completable< Integer> emptyCart(int idcart) {
+      return   cartDAO.emptyCart(idcart);
     }
 
     @Override

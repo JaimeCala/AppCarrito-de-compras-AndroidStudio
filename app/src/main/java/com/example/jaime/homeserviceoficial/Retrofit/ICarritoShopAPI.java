@@ -24,12 +24,14 @@ import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ICarritoShopAPI {
 
@@ -93,7 +95,7 @@ public interface ICarritoShopAPI {
 
     @FormUrlEncoded
     @POST("api/pedido/create")
-    Call<Pedido> createPedido(@Field("latitud") String latitud,
+    Observable<Pedido> createPedido(@Field("latitud") String latitud,
                              @Field("longitud") String longitud,
                              @Field("fecha") String fecha,
                              @Field("hora") String hora,
@@ -105,10 +107,13 @@ public interface ICarritoShopAPI {
 
     //insertamos pedido y productos
 
-    //@FormUrlEncoded
+
     //@Headers({"Content-Type: application/x-www-form-urlencoded"})
-    @POST("api/pedido-produ/create")
-    Call<List<PedidoProducto>> createPedidoProducto(@Body()Cart[] cart);
+    //@FormUrlEncoded
+    @POST("api/pedido-produ/create/{pedido}")
+    Observable<List<PedidoProducto>> createPedidoProducto( @Path("pedido") int pedido, @Body Cart[] cart);
+    //Observable<List<PedidoProducto>> createPedidoProducto(@Field("pedido") int idpedido ,@Field("cart") Cart[] cart);
+    //Observable<List<PedidoProducto>> createPedidoProducto(@Query("pedido") int idpedido ,@Body()Cart[] cart);
 
 
 

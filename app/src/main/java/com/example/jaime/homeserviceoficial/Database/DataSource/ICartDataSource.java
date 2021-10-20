@@ -4,7 +4,9 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public interface ICartDataSource {
 
@@ -16,7 +18,7 @@ public interface ICartDataSource {
     int countCartItems();
     double sumPrecio();
     double getPrecioTotal();
-    void  emptyCart();
+    Completable< Integer> emptyCart(int idcart);
     void insertToCart(Cart...carts);
     void upadateCart(Cart...carts);
     void deleteCartItem(Cart cart);

@@ -4,7 +4,9 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class CartRepository implements ICartDataSource{
 
@@ -64,8 +66,8 @@ public class CartRepository implements ICartDataSource{
     }
 
     @Override
-    public void  emptyCart() {
-        iCartDataSource.emptyCart();
+    public Completable< Integer> emptyCart(int idcart) {
+        return iCartDataSource.emptyCart(idcart);
     }
 
     @Override

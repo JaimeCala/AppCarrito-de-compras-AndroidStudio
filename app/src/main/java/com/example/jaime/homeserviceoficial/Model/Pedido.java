@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class Pedido {
 
+    private boolean success;
+
     @SerializedName("idpedido")
     @Expose
     private int idpedido;
@@ -53,8 +55,9 @@ public class Pedido {
 
 
 
+
     public Pedido(int idpedido, String latitud, String longitud
-            //, Date fecha, Date hora, String estado, int idcliente, String comentario, String direccion
+                  //, Date fecha, Date hora, String estado, int idcliente, String comentario, String direccion
                   //double precio
 
     ) {
@@ -149,6 +152,14 @@ public class Pedido {
     public void setPrecio(double precio) {
         this.precio = precio;
     }*/
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
 
 }

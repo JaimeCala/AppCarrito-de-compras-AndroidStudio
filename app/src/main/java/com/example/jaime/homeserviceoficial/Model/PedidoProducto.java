@@ -4,7 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PedidoProducto {
-    @SerializedName("idcliente")
+
+
+
+    @SerializedName("idpedidoproducto")
     @Expose
     private int idpedidoproducto;
 
@@ -86,4 +89,6 @@ public class PedidoProducto {
     public void setPrecio_total(Double precio_total) {
         this.precio_total = precio_total;
     }
+
+
 }
