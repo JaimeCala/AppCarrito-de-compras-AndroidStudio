@@ -176,9 +176,8 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         if (Common.cartRepository.sumPrecio() == 0) {
             btn_cart_pedido.setEnabled(false);
         }
-        btn_cart_pedido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btn_cart_pedido.setOnClickListener(v-> {
+
                 enviarOrden();
                 //eliminamos productos agregados al carrito
                 //Common.cartRepository.emptyCart();
@@ -186,7 +185,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                 //startActivity(new Intent(CartActivity.this,HomeActivity.class));
                 //finish();
 
-            }
+
         });
 
         //INICIA LOS LAYOUT
@@ -368,7 +367,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                                                             //==================================================================================================================
                                                                             //guardar pedido al servidor
-                                                                            GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.getPrecioTotal());
+                                                                            GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
 
                                                                             //===================================================================================================================
 
@@ -473,7 +472,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
 
         compositeDisposable.add(
-                mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.getPrecioTotal())
+                mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(Pedido ->{
@@ -537,11 +536,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
         Gson gson = new Gson();
 
-
         Cart[] jsonob = gson.fromJson(cart,Cart[].class);
-
-
-
 
         compositeDisposable.add(
                 mService.createPedidoProducto(idpedido,jsonob)
@@ -553,36 +548,9 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                 Toast.makeText(CartActivity.this, "Pedido enviado", Toast.LENGTH_SHORT).show();
 
 
+                                        //Common.cartRepository.emptyCart(carts.get(0).id);
 
-                                //limpiar cart
 
-                                //eliminamos productos agregados al carrito
-                                //Common.cartRepository.emptyCart();
-                                //cambiamos de actividad
-                                //startActivity(new Intent(CartActivity.this,HomeActivity.class));
-                                //finish();
-
-                                Common.cartRepository.emptyCart(carts.get(0).id)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribeOn(Schedulers.io())
-                                        .subscribe(new CompletableObserver() {
-                                            @Override
-                                            public void onSubscribe(@NonNull Disposable d) {
-
-                                            }
-
-                                            @Override
-                                            public void onComplete() {
-                                                startActivity(new Intent(CartActivity.this,HomeActivity.class));
-                                                finish();
-
-                                            }
-
-                                            @Override
-                                            public void onError(@NonNull Throwable e) {
-
-                                            }
-                                        });
 
 
 

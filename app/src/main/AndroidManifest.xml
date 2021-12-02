@@ -30,6 +30,7 @@
         <activity android:name=".ProductoActivity" />
         <activity android:name=".CartActivity" />
         <activity android:name=".FavoriteActivity"></activity>
+        <activity android:name=".HistorialActivity"></activity>
     </application>
 
 </manifest>

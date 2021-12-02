@@ -22,7 +22,7 @@ import java.util.List;
 public class Common {
 
     //private static final String BASE_URL = "http://192.168.43.34:3000/api/";
-    public static final String BASE_URL = "http://192.168.0.11:3000/";
+    public static final String BASE_URL = "http://192.168.0.10:3000/";
 
     public static Users currentUser = null;
 

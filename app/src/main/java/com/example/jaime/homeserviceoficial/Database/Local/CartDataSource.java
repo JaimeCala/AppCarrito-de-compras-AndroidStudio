@@ -65,8 +65,8 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
-    public Completable< Integer> emptyCart(int idcart) {
-      return   cartDAO.emptyCart(idcart);
+    public void emptyCart(int idcart) {
+        cartDAO.emptyCart(idcart);
     }
 
     @Override

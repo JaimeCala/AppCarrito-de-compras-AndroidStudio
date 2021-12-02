@@ -4,6 +4,7 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 import com.example.jaime.homeserviceoficial.Model.Categoria;
 import com.example.jaime.homeserviceoficial.Model.CategoriaProducto;
 import com.example.jaime.homeserviceoficial.Model.Cliente;
+import com.example.jaime.homeserviceoficial.Model.Historial;
 import com.example.jaime.homeserviceoficial.Model.ImgCategoria;
 import com.example.jaime.homeserviceoficial.Model.JWTToken;
 import com.example.jaime.homeserviceoficial.Model.Login;
@@ -39,7 +40,7 @@ public interface ICarritoShopAPI {
 
     @FormUrlEncoded
     @POST("api/user/create")
-    Call<Users> createUser (@Field("ci") String ci,
+    Observable<Users> createUser (@Field("ci") String ci,
                             @Field("expedido") String expedido,
                             @Field("nombre") String nombre,
                             @Field("paterno") String paterno,
@@ -53,7 +54,9 @@ public interface ICarritoShopAPI {
 
     @FormUrlEncoded
     @POST("api/login/create")
-    Call<Login> createLogin(@Field("username") String username,
+    Observable<Login> createLogin(
+                            @Field("user") int idusuario,
+                            @Field("username") String username,
                             @Field("password") String password,
                             @Field("fecha") String fecha,
                             @Field("hora")String hora);
@@ -79,6 +82,10 @@ public interface ICarritoShopAPI {
 
     @GET("api/img-categoria/imgcategorias")
     Observable<List<ImgCategoria>> imgCategoria();
+
+    //historial de pedidos
+    @GET("api/pedido/pedidorealizado/{idusuario}")
+    Call<List<Historial>> historialPedido(@Path("idusuario") int idusuario);
 
 
     //Obtenemos lista de productos, relacionados con table unidadproductos y imgproductos

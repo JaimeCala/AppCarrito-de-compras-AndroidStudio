@@ -45,7 +45,7 @@ public interface CartDAO {
     double getPrecioTotal();
 
     @Query("DELETE FROM Cart WHERE id=:idcart")
-    Completable< Integer>  emptyCart(int idcart);
+     void  emptyCart(int idcart);
 
     @Insert
     void insertToCart(Cart...carts);

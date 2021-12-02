@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -30,12 +31,17 @@ import java.util.Date;
 import java.util.Locale;
 
 import dmax.dialog.SpotsDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    CompositeDisposable compositeDisposable;
 
     private TextView registrarse ;
     private EditText usuario, contrasena;
@@ -57,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().hide(); //para anular el titulo
 
+        compositeDisposable = new CompositeDisposable();
+
+        mService = Common.getAPI();
+
         tokenManager = new TokenManager(getApplicationContext()); //inicializamos para mandar token guardado
 
         usuario = (EditText) findViewById(R.id.edtUsuario);
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                mService = Common.getAPI();
+                //mService = Common.getAPI();
 
                 final String usuarioVal = usuario.getText().toString();
                 final String contrasenaVal = contrasena.getText().toString();
@@ -96,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                 JWTToken jwtToken = response.body();
 
 
-                                tokenManager.createSesion(usuarioVal, jwtToken.getToken().toString());  //para mandar token guardada
+                                tokenManager.createSesion(usuarioVal, jwtToken.getToken());  //para mandar token guardada
 
                                 Toast.makeText(MainActivity.this, "el token es"+jwtToken.getToken(), Toast.LENGTH_SHORT).show();
 
@@ -166,13 +176,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        registrarse = (TextView) findViewById(R.id.txtRegistrarse);
-        registrarse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        registrarse =  findViewById(R.id.txtRegistrarse);
+        registrarse.setOnClickListener(res-> {
+
              mostrarRegistroDialog();
 
-            }
+
         });
 
 
@@ -190,26 +199,26 @@ public class MainActivity extends AppCompatActivity {
         View registrouser_layout = inflater.inflate(R.layout.registrouser_layout,null);
 
 
-        expedido = (TextView) findViewById(R.id.txtExpedidoUser);
-        comboExpedido = (Spinner) registrouser_layout.findViewById(R.id.spinExpedidoUser);
-        sexo = (TextView) findViewById(R.id.txtSexoUser);
-        comboSexo = (Spinner) registrouser_layout.findViewById(R.id.spinSexoUser);
+        expedido =  findViewById(R.id.txtExpedidoUser);
+        comboExpedido =  registrouser_layout.findViewById(R.id.spinExpedidoUser);
+        sexo =  findViewById(R.id.txtSexoUser);
+        comboSexo =  registrouser_layout.findViewById(R.id.spinSexoUser);
         ArrayAdapter<CharSequence> adapterExpedido = ArrayAdapter.createFromResource(this,R.array.combo_expedido, android.R.layout.simple_spinner_item);
         comboExpedido.setAdapter(adapterExpedido);
         ArrayAdapter<CharSequence> adapterSexo = ArrayAdapter.createFromResource(this,R.array.combo_sexo, android.R.layout.simple_spinner_item);
         comboSexo.setAdapter(adapterSexo);
 
 
-        ci = (MaterialEditText) registrouser_layout.findViewById(R.id.edtCedulaUser);
-        nombre = (MaterialEditText) registrouser_layout.findViewById(R.id.edtNombreUser);
-        paterno = (MaterialEditText) registrouser_layout.findViewById(R.id.edtPaternoUser);
-        materno = (MaterialEditText) registrouser_layout.findViewById(R.id.edtMaternoUser);
-        celular = (MaterialEditText) registrouser_layout.findViewById(R.id.edtCelularUser);
-        direccion = (MaterialEditText) registrouser_layout.findViewById(R.id.edtDireccionUser);
-        ciudad = (MaterialEditText) registrouser_layout.findViewById(R.id.edtCiudaduser);
-        correo = (MaterialEditText) registrouser_layout.findViewById(R.id.edtCorreoUser);
-        passwordUser = (MaterialEditText) registrouser_layout.findViewById(R.id.edtPasswordUser);
-        registrar = (Button) registrouser_layout.findViewById(R.id.btnRegistrarUser);
+        ci =  registrouser_layout.findViewById(R.id.edtCedulaUser);
+        nombre =  registrouser_layout.findViewById(R.id.edtNombreUser);
+        paterno =  registrouser_layout.findViewById(R.id.edtPaternoUser);
+        materno =  registrouser_layout.findViewById(R.id.edtMaternoUser);
+        celular =  registrouser_layout.findViewById(R.id.edtCelularUser);
+        direccion =  registrouser_layout.findViewById(R.id.edtDireccionUser);
+        ciudad =  registrouser_layout.findViewById(R.id.edtCiudaduser);
+        correo =  registrouser_layout.findViewById(R.id.edtCorreoUser);
+        passwordUser =  registrouser_layout.findViewById(R.id.edtPasswordUser);
+        registrar =  registrouser_layout.findViewById(R.id.btnRegistrarUser);
 
 
         //cerrar dialogo
@@ -217,10 +226,7 @@ public class MainActivity extends AppCompatActivity {
        final AlertDialog dialog = builder.create();
 
         //evento boton registrar
-        registrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+        registrar.setOnClickListener(res-> {
 
                 //cerrar dialogo despues del click
                 dialog.dismiss();
@@ -312,8 +318,57 @@ public class MainActivity extends AppCompatActivity {
                 final AlertDialog esperarDialog = new SpotsDialog(MainActivity.this);
                 esperarDialog.show();
                 esperarDialog.setMessage("Por favor espere...");
+                Log.e("VERIFICANDO", correoUser);
 
-                mService.createUser(ciUser,expedidoUser,nombreUser,paternoUser,maternoUser,
+                Toast.makeText(MainActivity.this, "VERIFICANDO NULL "+correoUser, Toast.LENGTH_SHORT).show();
+                //------------------------------------prueba---------------------------------------------------
+
+
+                compositeDisposable.add(
+                        mService.createUser(ciUser,expedidoUser,nombreUser,paternoUser,maternoUser,
+                                correoUser,celularUser,direccionUser,sexoUser,ciudadUser)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(Users ->{
+
+                                    esperarDialog.dismiss();
+                                    Users users = Users;
+                                    Toast.makeText(MainActivity.this, "ENTRA  "+correoUser, Toast.LENGTH_SHORT).show();
+                                    
+                                    if(TextUtils.isEmpty(users.getMessage()))
+                                    {
+                                       //------------------------registro al login-----------------------
+                                        compositeDisposable.add(
+                                                mService.createLogin(users.getIdusuario(), correoUser,passworUser,currentDate,currentTime)
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribeOn(Schedulers.io())
+                                                        .subscribe(Login ->{
+
+                                                            esperarDialog.dismiss();
+                                                            Login login = Login;
+                                                            if(TextUtils.isEmpty(login.getMessage()))
+                                                            {
+                                                                Toast.makeText(MainActivity.this, "Login guardado ", Toast.LENGTH_SHORT).show();
+
+                                                                //cambiamos de actividad
+                                                                startActivity(new Intent(MainActivity.this,HomeActivity.class));
+                                                                finish();
+                                                            }
+
+                                                        },throwable -> {Toast.makeText(MainActivity.this, "[USUARIO CREADO]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();}) );
+
+
+
+                                    }
+
+                                },throwable -> {Toast.makeText(MainActivity.this, "[USUARIO CREADO]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();}) );
+
+
+
+
+               //------------------------------------fin prueba-------------------------------------------------------
+
+           /*     mService.createUser(ciUser,expedidoUser,nombreUser,paternoUser,maternoUser,
                                     correoUser,celularUser,direccionUser,sexoUser,ciudadUser)
                                     .enqueue(new Callback<Users>() {
                                         @Override
@@ -359,11 +414,11 @@ public class MainActivity extends AppCompatActivity {
                                             esperarDialog.dismiss();
 
                                         }
-                                    });
+                                    });*/
 
 
 
-            }
+
         });
 
 
@@ -392,4 +447,16 @@ public class MainActivity extends AppCompatActivity {
         isBackButtonClicked = false;
         super.onResume();
     }
+
+   /* @Override
+    protected void onDestroy() {
+        compositeDisposable.clear();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        compositeDisposable.clear();
+        super.onStop();
+    }*/
 }

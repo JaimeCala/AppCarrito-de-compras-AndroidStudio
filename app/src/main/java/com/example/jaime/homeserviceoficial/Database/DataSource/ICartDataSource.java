@@ -18,7 +18,7 @@ public interface ICartDataSource {
     int countCartItems();
     double sumPrecio();
     double getPrecioTotal();
-    Completable< Integer> emptyCart(int idcart);
+    void emptyCart(int idcart);
     void insertToCart(Cart...carts);
     void upadateCart(Cart...carts);
     void deleteCartItem(Cart cart);
