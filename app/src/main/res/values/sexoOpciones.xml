@@ -4,8 +4,8 @@
     <string-array name="combo_sexo">
 
         <item>Seleccione</item>
-        <item>Femenino</item>
-        <item>Masculino</item>
+        <item>FEMENINO</item>
+        <item>MASCULINO</item>
 
     </string-array>
 

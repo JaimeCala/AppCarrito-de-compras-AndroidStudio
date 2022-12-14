@@ -9,8 +9,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    cardview:contentPadding="5dp"
-    cardview:cardElevation="8dp"
+    cardview:contentPadding="2dp"
+    cardview:cardElevation="5dp"
     cardview:cardBackgroundColor="@color/white"
     cardview:cardUseCompatPadding="true"
     cardview:cardCornerRadius="5dp">

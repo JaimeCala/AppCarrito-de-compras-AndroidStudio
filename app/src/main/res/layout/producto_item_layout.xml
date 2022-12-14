@@ -9,10 +9,10 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
-    android:layout_height="330dp"
+    android:layout_height="355dp"
     android:layout_margin="5dp"
-    cardview:contentPadding="5dp"
-    cardview:cardElevation="8dp"
+    cardview:contentPadding="2dp"
+    cardview:cardElevation="5dp"
     cardview:cardBackgroundColor="@color/white"
     cardview:cardUseCompatPadding="true"
     cardview:cardCornerRadius="5dp">
@@ -35,7 +35,7 @@
             android:layout_height="41dp"
             android:gravity="center"
             android:padding="2dp"
-            android:text="Nombre ProductoO"
+            android:text="Nombre Producto"
             android:textStyle="bold"
             android:textSize="15dp"
             android:textColor="#0d0d0d"/>
@@ -62,7 +62,8 @@
                 android:text="Unidad"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:textColor="#0d0d0d"/>
+                android:textColor="#0d0d0d"
+                android:layout_marginLeft="15dp"/>
 
         </LinearLayout>
         <LinearLayout
@@ -71,16 +72,61 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/txt_precioactual_id"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
+
+                android:text="Precio:"
+                android:textColor="#0A52E3"
+                android:textStyle="bold"
+                android:textSize="12dp"
+                android:paddingLeft="1dp"/>
+
+            <TextView
                 android:id="@+id/txt_precio_id"
                 android:layout_width="60dp"
                 android:layout_height="20dp"
+                android:layout_marginLeft="-15dp"
                 android:background="@drawable/text_round"
                 android:text="Precio Nuevo"
                 android:textColor="#e30a0a"
                 android:textStyle="bold"
-                android:textSize="15dp"/>
+
+                android:textSize="15dp"
+                />
 
 
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txt_preciolabeloferta_id"
+                android:layout_width="120dp"
+                android:layout_height="20dp"
+
+                android:text="Descuento:"
+                android:textColor="#0A52E3"
+                android:textStyle="bold"
+                android:textSize="12dp"
+                android:paddingLeft="1dp"/>
+            <TextView
+                android:id="@+id/txt_preciooferta_id"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
+
+                android:text="Oferta"
+                android:textColor="#20E30A"
+                android:layout_marginLeft="-55dp"
+                android:layout_marginRight="1dp"
+                android:textStyle="bold"
+                android:textSize="12dp"/>
 
         </LinearLayout>
 

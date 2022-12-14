@@ -3,6 +3,8 @@ package com.example.jaime.homeserviceoficial;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -27,8 +29,14 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import dmax.dialog.SpotsDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
     CompositeDisposable compositeDisposable;
 
     private TextView registrarse ;
-    private EditText usuario, contrasena;
+    private EditText usuario;
+    private TextInputLayout contrasena;
     private Button login;
 
-    private MaterialEditText ci,nombre,paterno,materno,celular,direccion,ciudad,correo,passwordUser;
+    private MaterialEditText ci,nombre,paterno,materno,celular,direccion,ciudad,correo;
+    private TextInputLayout passwordUser;
     private TextView expedido, sexo;
     private Spinner comboExpedido, comboSexo;
     private Button registrar;
@@ -70,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         tokenManager = new TokenManager(getApplicationContext()); //inicializamos para mandar token guardado
 
         usuario = (EditText) findViewById(R.id.edtUsuario);
-        contrasena = (EditText) findViewById(R.id.edtContrasena);
+        contrasena = (TextInputLayout) findViewById(R.id.edtContrasena);
 
         login = (Button) findViewById(R.id.btnLogin);
         login.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 //mService = Common.getAPI();
 
                 final String usuarioVal = usuario.getText().toString();
-                final String contrasenaVal = contrasena.getText().toString();
+                final String contrasenaVal = contrasena.getEditText().getText().toString();
 
                 if(!usuarioVal.isEmpty() && !contrasenaVal.isEmpty())
                 {
@@ -108,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 tokenManager.createSesion(usuarioVal, jwtToken.getToken());  //para mandar token guardada
 
-                                Toast.makeText(MainActivity.this, "el token es"+jwtToken.getToken(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(MainActivity.this, "el token es"+jwtToken.getToken(), Toast.LENGTH_SHORT).show();
 
                                 mService.getUserDrawerIcon("Bearer "+jwtToken.getToken(),usuarioVal).enqueue(new Callback<Users>() {
                                     @Override
@@ -116,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                        Users users = response.body();
-                                        Toast.makeText(MainActivity.this, "PRobando resul"+users.getNombre(), Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(MainActivity.this, "PRobando resul"+users.getNombre(), Toast.LENGTH_SHORT).show();
                                        if(users.getNombre()!=null)
                                        {
                                            //esperarDialog.dismiss();
@@ -128,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                        }
                                        else
                                        {
-                                           Toast.makeText(MainActivity.this, "Grave error ", Toast.LENGTH_SHORT).show();
+                                           Toast.makeText(MainActivity.this, "Error inesperado ", Toast.LENGTH_SHORT).show();
                                        }
 
 
@@ -221,6 +231,11 @@ public class MainActivity extends AppCompatActivity {
         registrar =  registrouser_layout.findViewById(R.id.btnRegistrarUser);
 
 
+
+
+
+
+
         //cerrar dialogo
         builder.setView(registrouser_layout);
        final AlertDialog dialog = builder.create();
@@ -230,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
 
                 //cerrar dialogo despues del click
                 dialog.dismiss();
+
+
+
 
 
 
@@ -289,27 +307,34 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Introduzca su correo electrónico", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(TextUtils.isEmpty(passwordUser.getText().toString() ))
+                if(TextUtils.isEmpty(passwordUser.getEditText().getText().toString() ))
                 {
                     Toast.makeText(MainActivity.this, "Introduzca su contraseña", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(passwordUser.getEditText().getText().toString().length() <8){
+
+                    Toast.makeText(MainActivity.this, "Introduzca 8 caracteres o mas contraseña", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
 
                 String ciUser = ci.getText().toString();
                 String expedidoUser = comboExpedido.getSelectedItem().toString();
-                String nombreUser = nombre.getText().toString();
-                String paternoUser = paterno.getText().toString();
-                String maternoUser = materno.getText().toString();
+                String nombreUser = nombre.getText().toString().toUpperCase();
+                String paternoUser = paterno.getText().toString().toUpperCase();
+                String maternoUser = materno.getText().toString().toUpperCase();
                 String celularUser = celular.getText().toString();
-                String direccionUser = direccion.getText().toString();
-                String ciudadUser = ciudad.getText().toString();
+                String direccionUser = direccion.getText().toString().toUpperCase();
+                String ciudadUser = ciudad.getText().toString().toUpperCase();
                 String sexoUser = comboSexo.getSelectedItem().toString();
                 String correoUser = correo.getText().toString();
-                String passworUser = passwordUser.getText().toString();
+                String passworUser = passwordUser.getEditText().getText().toString();
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd"  );
+                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss" , Locale.getDefault());
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/La_Paz"));
+                simpleDateFormat2.setTimeZone(TimeZone.getTimeZone("America/La_Paz"));
                 String currentDate= simpleDateFormat.format(new Date());
                 String currentTime = simpleDateFormat2.format(new Date());
 

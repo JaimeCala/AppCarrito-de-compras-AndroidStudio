@@ -3,9 +3,11 @@ package com.example.jaime.homeserviceoficial.Adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,13 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.example.jaime.homeserviceoficial.CartActivity;
 import com.example.jaime.homeserviceoficial.Database.ModelDB.Cart;
 import com.example.jaime.homeserviceoficial.Database.ModelDB.Favorite;
+import com.example.jaime.homeserviceoficial.HomeActivity;
 import com.example.jaime.homeserviceoficial.Interface.ItemClickListener;
 import com.example.jaime.homeserviceoficial.Model.CategoriaProducto;
 import com.example.jaime.homeserviceoficial.R;
 import com.example.jaime.homeserviceoficial.Utils.Common;
 import com.google.gson.Gson;
+import com.nex3z.notificationbadge.NotificationBadge;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -35,6 +40,11 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
 
     List<Cart> cartList;
 
+    //NotificationBadge badge;
+    //
+    //final double precioenvio=0;
+
+    public int elegantcounter;
 
 
     String url= "api/img-producto/";
@@ -60,21 +70,31 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
 
 
 
-        holder.txt_precioProducto.setText(new StringBuilder("BS.").append(categoriaProductoList.get(position).getProduprecio()).toString());
-        holder.txt_nombreProducto.setText(categoriaProductoList.get(position).getProdunombre());
-        holder.txt_pesoProducto.setText( String.format(categoriaProductoList.get(position).getProdupeso().toString()) );
-        holder.txt_unidadProducto.setText(categoriaProductoList.get(position).getUnivalor());
-        
+
+
+        if( categoriaProductoList.get(holder.getAdapterPosition()).getProduoferta() != "NO"){
+            holder.txt_precioOferta.setText(new StringBuilder("BS.").append(categoriaProductoList.get(holder.getAdapterPosition()).getProduporcentaje()).toString());
+
+
+        }
+            holder.txt_precioProducto.setText(new StringBuilder("BS.").append(categoriaProductoList.get(holder.getAdapterPosition()).getProduprecio()).toString());
+
+            //holder.txt_precioOferta.setText(new StringBuilder("BS.").append(categoriaProductoList.get(holder.getAdapterPosition()).getProduoferta()));
+
+            holder.txt_nombreProducto.setText(categoriaProductoList.get(holder.getAdapterPosition()).getProdunombre());
+            holder.txt_pesoProducto.setText(String.format(categoriaProductoList.get(holder.getAdapterPosition()).getProdupeso().toString()));
+            holder.txt_unidadProducto.setText(categoriaProductoList.get(holder.getAdapterPosition()).getUnivalor());
+
         //evento click boton agregar producto
         holder.btn_add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mostrarAddToCartDialog(position);
+                mostrarAddToCartDialog(holder.getAdapterPosition());
             }
         });
         //mostramos imagen de productos
         Picasso.with(context)
-                .load(Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu())
+                .load(Common.BASE_URL+url+categoriaProductoList.get(holder.getAdapterPosition()).getImgnombreprodu())
                 .into(holder.img_producto);
 
         holder.setItemClickListener(new ItemClickListener() {
@@ -94,15 +114,15 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
         holder.btn_favorito.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Common.favoriteRepository.isFavorite(categoriaProductoList.get(position).getIdprodu())!=1)
+                if(Common.favoriteRepository.isFavorite(categoriaProductoList.get(holder.getAdapterPosition()).getIdprodu())!=1)
                 {
-                    adicionarOrRemoveToFavorite(categoriaProductoList.get(position),true);
+                    adicionarOrRemoveToFavorite(categoriaProductoList.get(holder.getAdapterPosition()),true);
                     holder.btn_favorito.setImageResource(R.drawable.ic_favorite_black_24dp);
 
                 }
                 else
                 {
-                    adicionarOrRemoveToFavorite(categoriaProductoList.get(position),false);
+                    adicionarOrRemoveToFavorite(categoriaProductoList.get(holder.getAdapterPosition()),false);
                     holder.btn_favorito.setImageResource(R.drawable.ic_favorite_border_white_24dp);
 
                 }
@@ -142,7 +162,7 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
         final ElegantNumberButton txt_contador = view.findViewById(R.id.txt_count);
         final TextView txt_nombre_producto = view.findViewById(R.id.txt_dialogproducto_nombre);
         final TextView txt_precio_dialog = view.findViewById(R.id.txt_precio_dialog);
-
+        final TextView txt_oferta_dialog = view.findViewById(R.id.txt_precio_oferta_dialog);
         final TextView txt_precio_sum = view.findViewById(R.id.txt_precio_suma_dialog);
 
 
@@ -154,13 +174,31 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
         txt_nombre_producto.setText(categoriaProductoList.get(position).getProdunombre());
         txt_precio_dialog.setText(new StringBuilder("Bs.").append(categoriaProductoList.get(position).getProduprecio()).toString());
 
+        txt_oferta_dialog.setText(new StringBuilder("Bs.").append(categoriaProductoList.get(position).getProduporcentaje()).toString());
+
         txt_precio_sum.setText(new StringBuilder("Total: ").append(categoriaProductoList.get(position).getProduprecio()).append("Bs."));
+
+        txt_precio_sum.setText(new StringBuilder("Total: ").append((categoriaProductoList.get(position).getProduprecio()-categoriaProductoList.get(position).getProduporcentaje())).append("Bs."));
+
+        //creamos var para capturar el resultado de count y preci
+         //final double precioenvio;
 
         //-------------------------------escuchando contador al cambio-------//
         txt_contador.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
             @Override
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
-                txt_precio_sum.setText(new StringBuilder("Total: ").append(categoriaProductoList.get(position).getProduprecio()*newValue).append("Bs."));
+
+                if(categoriaProductoList.get(position).getProdustock()<=newValue){
+                    elegantcounter = categoriaProductoList.get(position).getProdustock();
+
+                   txt_contador.setRange(1,elegantcounter);
+                   // txt_contador.setEnabled(false);
+                }
+
+                txt_precio_sum.setText(new StringBuilder("Total: ").append((categoriaProductoList.get(position).getProduprecio()*newValue)-(categoriaProductoList.get(position).getProduporcentaje()*newValue)).append("Bs."));
+                 //precioenvio = (categoriaProductoList.get(position).getProduprecio()*newValue)-(categoriaProductoList.get(position).getProduporcentaje()*newValue);
+
+
             }
         });
 
@@ -183,7 +221,7 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
 
-                double price = Double.parseDouble(categoriaProductoList.get(position).getProduprecio().toString())*Double.parseDouble(txt_contador.getNumber());
+                double price = (Double.parseDouble(categoriaProductoList.get(position).getProduprecio().toString())*Double.parseDouble(txt_contador.getNumber()))-(categoriaProductoList.get(position).getProduporcentaje()*Double.parseDouble(txt_contador.getNumber()));
                 final double finalprice = Math.round(price);
                 //Toast.makeText(context, "Se agrego al carrito"+finalprice, Toast.LENGTH_SHORT).show();
 
@@ -191,11 +229,7 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                 int exitsItem = Common.cartRepository.countCartItems();
                 final int idproducto = categoriaProductoList.get(position).getIdprodu();
 
-
-
                 if(exitsItem>0){
-
-
 
                     boolean exist_id = Common.cartRepository.getIdProducto(idproducto);
                     Log.d("existe_idproducto", String.valueOf(exist_id));
@@ -212,6 +246,8 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                                             Integer.parseInt(txt_contador.getNumber()),
                                             finalprice,
                                             finalprice,
+                                            categoriaProductoList.get(position).getProduoferta(),
+                                            categoriaProductoList.get(position).getProduporcentaje(),
                                             idproducto
 
 
@@ -269,6 +305,8 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                             cartItem.precio = finalprice;
                             cartItem.precio_uni = categoriaProductoList.get(position).getProduprecio();
                             cartItem.precio_total = finalprice;
+                            cartItem.oferta = categoriaProductoList.get(position).getProduoferta();
+                            cartItem.porcentaje_des = categoriaProductoList.get(position).getProduporcentaje();
                             cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
 
 
@@ -281,11 +319,15 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
 
                             Toast.makeText(context, "Se agrego al carrito", Toast.LENGTH_SHORT).show();
 
+
+
+
                         }
                         catch (Exception ex)
                         {
                             Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+
                     }
 
 
@@ -310,6 +352,8 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
                         cartItem.precio = finalprice;
                         cartItem.precio_uni = categoriaProductoList.get(position).getProduprecio();
                         cartItem.precio_total = finalprice;
+                        cartItem.oferta = categoriaProductoList.get(position).getProduoferta();
+                        cartItem.porcentaje_des = categoriaProductoList.get(position).getProduporcentaje();
                         cartItem.imgnombre = Common.BASE_URL+url+categoriaProductoList.get(position).getImgnombreprodu();
 
 
@@ -322,11 +366,14 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
 
                         Toast.makeText(context, "Se agrego al carrito", Toast.LENGTH_SHORT).show();
 
+
+
                     }
                     catch (Exception ex)
                     {
                         Toast.makeText(context,ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+
                 }
 
 
@@ -369,4 +416,22 @@ public class CategoriaProductoAdapter extends RecyclerView.Adapter<CategoriaProd
     public int getItemCount() {
         return categoriaProductoList.size();
     }
+
+    //-------------para actualizar badge----------------//
+
+
+   /* private void actualizarCartCount() {
+
+
+                if(Common.cartRepository.countCartItems() ==0)
+                    badge.setVisibility(View.INVISIBLE);
+                else {
+                    badge.setVisibility(View.VISIBLE);
+                    badge.setText(String.valueOf(Common.cartRepository.countCartItems()));
+                }
+
+    }*/
+    //--------------------------------------------------//
+
+
 }

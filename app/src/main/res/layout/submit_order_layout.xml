@@ -6,6 +6,34 @@
     android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FORMA DE PAGO"
+        android:textColor="#1537E4"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginLeft="90dp">
+
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="-Tigo Money:=> 77515177"
+        android:textColor="#1537E4"
+        android:textSize="15sp"
+        >
+
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="-Transferencia Banco Sol:=> 1919209-000-001"
+        android:textColor="#1537E4"
+        android:textSize="15sp"
+        >
+
+    </TextView>
 
     <EditText
         android:id="@+id/edt_comentario"
@@ -44,5 +72,41 @@
         android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/pdf_view"
+        android:src="@drawable/ic_baseline_picture_as_pdf_24"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/txt_nombrePDF"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#9EA4B6"
+        android:text="pdf adjunto"
+        />
+    <Button
+        android:id="@+id/btn_upload"
+        android:text="ADJUNTAR PDF/IMG DE PAGO"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Su pedido estará en 1 hora"
+        android:textColor="#B7BCD3"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp">
+
+    </TextView>
 
 </LinearLayout>

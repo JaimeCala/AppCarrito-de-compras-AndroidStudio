@@ -21,8 +21,12 @@ import java.util.List;
 
 public class Common {
 
-    //private static final String BASE_URL = "http://192.168.43.34:3000/api/";
-    public static final String BASE_URL = "http://192.168.0.10:3000/";
+    //private static final String BASE_URL = "http://192.168.43.34:3000/";
+    public static final String BASE_URL = "http://192.168.0.11:3000/";
+    //public static final String BASE_URL_LOCAL = "http://10.0.2.2/";
+
+    public static final String URL_NOTIFICACION_PEDIDO = "http://192.168.0.11:8181/";
+    public static final String URL_NOTIFICACION_MENSAJE = "http://192.168.0.11:8182/";
 
     public static Users currentUser = null;
 

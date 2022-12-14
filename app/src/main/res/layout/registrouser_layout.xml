@@ -63,6 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
+
                     android:inputType="text"
                     android:layout_marginLeft="10dp"
                     app:met_floatingLabel="highlight"
@@ -166,7 +167,7 @@
                     app:met_floatingLabel="highlight"
                     />
 
-                <com.rengwuxian.materialedittext.MaterialEditText
+              <!--  <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtPasswordUser"
                     android:hint="Contraseña"
                     android:layout_width="match_parent"
@@ -175,7 +176,32 @@
                     android:inputType="textPassword"
                     android:layout_marginLeft="10dp"
                     app:met_floatingLabel="highlight"
-                    />
+
+
+                    />-->
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/edtPasswordUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+
+
+                    app:passwordToggleEnabled="true"
+                    app:hintEnabled="false"
+
+
+                    >
+
+                    <android.support.design.widget.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contraseña 8 caracteres mínimo"
+
+                        android:inputType="textPassword"
+                        android:layout_marginLeft="10dp"
+
+                        />
+                </android.support.design.widget.TextInputLayout>
 
 
 

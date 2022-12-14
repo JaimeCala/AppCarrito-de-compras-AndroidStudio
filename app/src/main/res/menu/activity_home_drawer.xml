@@ -8,16 +8,28 @@
 
     </group>
 
-    <item android:title="Home Service">
+    <item  >
         <menu>
             <item
+                android:id="@+id/nav_login"
+                android:icon="@drawable/ic_logino"
+                android:title="Iniciar sesión" />
+            <item
                 android:id="@+id/nav_historial"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_historialpedido_foreground"
                 android:title="Historial" />
             <item
                 android:id="@+id/nav_favorite"
                 android:icon="@drawable/ic_favorite_black_24dp"
                 android:title="Favoritos" />
+            <item
+                android:id="@+id/nav_oferta"
+                android:icon="@drawable/ic_ofertas"
+                android:title="Productos en oferta" />
+            <item
+                android:id="@+id/nav_reclamo"
+                android:icon="@drawable/ic_reclamos"
+                android:title="Reclamo/sugerencia" />
 
             <item
                 android:id="@+id/nav_salir_sesion"

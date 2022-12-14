@@ -3,6 +3,9 @@ package com.example.jaime.homeserviceoficial.TokenManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.jaime.homeserviceoficial.Model.JWTToken;
+import com.example.jaime.homeserviceoficial.Utils.Common;
+
 public class TokenManager {
 
     private  SharedPreferences sharedPreferences;
@@ -34,7 +37,20 @@ public class TokenManager {
 
     public void cerrarSesion()
     {
-        editor.clear();
-        editor.commit();
+        /*editor.clear();
+        editor.commit();*/
+        sharedPreferences.edit().clear().apply();
+    }
+
+    public boolean verificarSesion()
+    {
+        String username = sharedPreferences.getString(KEY_USER_NAME, null);
+        String token = sharedPreferences.getString(KEY_JWT_TOKEN, null);
+        if(username != null && token != null){
+            return true;
+
+        }else {
+            return false;
+        }
     }
 }

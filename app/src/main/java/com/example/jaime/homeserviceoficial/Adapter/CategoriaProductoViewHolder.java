@@ -13,7 +13,7 @@ import com.example.jaime.homeserviceoficial.R;
 public class CategoriaProductoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     ImageView img_producto;
-    TextView txt_nombreProducto,txt_pesoProducto,txt_unidadProducto,txt_precioProducto;
+    TextView txt_nombreProducto,txt_pesoProducto,txt_unidadProducto,txt_precioProducto, txt_precioOferta;
 
     TextView txt_preci_sum;
 
@@ -34,6 +34,7 @@ public class CategoriaProductoViewHolder extends RecyclerView.ViewHolder impleme
         txt_pesoProducto = itemView.findViewById(R.id.txt_peso_id);
         txt_unidadProducto = itemView.findViewById(R.id.txt_unidad_id);
         txt_precioProducto = itemView.findViewById(R.id.txt_precio_id);
+        txt_precioOferta = itemView.findViewById(R.id.txt_preciooferta_id);
 
         btn_add_to_cart= itemView.findViewById(R.id.boton_agregarCarrito_id);
         btn_favorito= itemView.findViewById(R.id.boton_favorito_id);

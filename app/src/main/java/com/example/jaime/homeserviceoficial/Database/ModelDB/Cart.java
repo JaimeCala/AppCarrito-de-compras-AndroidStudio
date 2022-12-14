@@ -40,6 +40,12 @@ public class Cart {
     @ColumnInfo(name = "precio_total")
     public  double precio_total;
 
+    @ColumnInfo(name = "oferta")
+    public  String oferta;
+
+    @ColumnInfo(name = "porcentaje_des")
+    public  double porcentaje_des;
+
     /*@ColumnInfo(name = "pedido")
     public  int pedido;*/
 

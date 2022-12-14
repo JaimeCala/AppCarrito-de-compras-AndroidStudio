@@ -46,8 +46,8 @@ public class CartRepository implements ICartDataSource{
     }
 
     @Override
-    public void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p) {
-        iCartDataSource.updateProducto(  amount_p,  cantidad_p,  precio_p,  precio_total_p ,  idproducto_p);
+    public void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , String oferta, double porcentaje_des, int idproducto_p) {
+        iCartDataSource.updateProducto(  amount_p,  cantidad_p,  precio_p,  precio_total_p , oferta, porcentaje_des,  idproducto_p);
     }
 
     @Override

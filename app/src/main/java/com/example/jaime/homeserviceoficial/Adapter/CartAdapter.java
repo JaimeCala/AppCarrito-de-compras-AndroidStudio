@@ -64,7 +64,10 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.CartViewHolde
         holder.txt_cart_amount.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
             @Override
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+                //se agrega para no cambiar contador
+
                 Cart cart = cartList.get(position);
+                
                 cart.amount = newValue;
                 cart.cantidad = newValue;
                 cart.precio = Math.round(priceOne*newValue);

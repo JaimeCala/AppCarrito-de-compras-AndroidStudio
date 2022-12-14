@@ -32,8 +32,8 @@ public interface CartDAO {
 
 
 
-    @Query("UPDATE cart SET amount =:amount_p+amount,cantidad =:cantidad_p+cantidad, precio=:precio_p+precio, precio_total =:precio_total_p+precio_total WHERE producto=:idproducto_p")
-    void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , int idproducto_p);
+    @Query("UPDATE cart SET amount =:amount_p+amount,cantidad =:cantidad_p+cantidad, precio=:precio_p+precio, precio_total =:precio_total_p+precio_total, oferta =:oferta, porcentaje_des =:porcentaje_des WHERE producto=:idproducto_p")
+    void updateProducto(int amount_p, int cantidad_p, double precio_p, double precio_total_p , String oferta, double porcentaje_des, int idproducto_p);
 
     @Query("SELECT COUNT(*) FROM cart ")
     int countCartItems();

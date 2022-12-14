@@ -1,6 +1,8 @@
 package com.example.jaime.homeserviceoficial;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +12,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Contacts;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,6 +33,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,21 +47,28 @@ import com.example.jaime.homeserviceoficial.Model.Pedid;
 import com.example.jaime.homeserviceoficial.Model.Pedido;
 import com.example.jaime.homeserviceoficial.Model.PedidoProducto;
 import com.example.jaime.homeserviceoficial.Retrofit.ICarritoShopAPI;
+import com.example.jaime.homeserviceoficial.TokenManager.TokenManager;
 import com.example.jaime.homeserviceoficial.Utils.Common;
+import com.example.jaime.homeserviceoficial.Utils.ProgressRequestBody;
 import com.example.jaime.homeserviceoficial.Utils.RecyclerItemTouchHelper;
 import com.example.jaime.homeserviceoficial.Utils.RecyclerItemTouchHelperListener;
+import com.example.jaime.homeserviceoficial.Utils.UploadCallBacks;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.SingleObserver;
@@ -64,11 +77,18 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Multipart;
 
-public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener {
+public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener, UploadCallBacks {
+
 
     RecyclerView recycler_cart;
     Button btn_cart_pedido;
@@ -92,91 +112,124 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
     private LocationManager ubicacion;
     Location location;
 
+    private TokenManager tokenManager;
+
+    private Socket mSocket;
+    {
+        try{
+            mSocket = IO.socket(Common.URL_NOTIFICACION_PEDIDO);
+        }catch (URISyntaxException e){}
+    }
+
+    Button btnUpload;
+    TextView txt_nombrePDF;
+    ImageView imageViewPDF;
+
+    Uri selectedFileUri;
+    Context context;
+
+
+    ProgressDialog progressDialog;
+
+    private static final int REQUEST_PERMISSION_CODE = 1000;
+    private static final int PICK_FILE_REQUEST = 1001;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         setTitle("Productos agregados");
 
+        mSocket.connect();
+
+
+
         // Toast.makeText(this, "Se necesita Activar GPS sino lo tiene activado", Toast.LENGTH_SHORT).show();
 
         compositeDisposable = new CompositeDisposable();
 
-        mService = Common.getAPI();
+        tokenManager = new TokenManager(getApplicationContext());
 
-        recycler_cart = findViewById(R.id.recycler_cart);
-        recycler_cart.setLayoutManager(new LinearLayoutManager(this));
-        recycler_cart.setHasFixedSize(true);
+  /*      if(tokenManager.verificarSesion()){   */
 
-        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recycler_cart);
+            mService = Common.getAPI();
 
-        // mostrar precio total
-        txt_cart_preciototal = findViewById(R.id.txt_preciototal_cart);
-        txt_cart_preciototal.setText(new StringBuilder("Total: ").append(Common.cartRepository.sumPrecio()).append(" BS."));
+            recycler_cart = findViewById(R.id.recycler_cart);
+            recycler_cart.setLayoutManager(new LinearLayoutManager(this));
+            recycler_cart.setHasFixedSize(true);
 
+            ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+            new ItemTouchHelper(simpleCallback).attachToRecyclerView(recycler_cart);
 
-        //---------------------------------aqui va el dialog para permiso---------------//
-        //comprobamos si esta activado el gps
-        ubicacion = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        final boolean gpsEnabled = ubicacion.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            // mostrar precio total
+            txt_cart_preciototal = findViewById(R.id.txt_preciototal_cart);
+            txt_cart_preciototal.setText(new StringBuilder("Total: ").append(Common.cartRepository.sumPrecio()).append(" BS."));
 
 
-        if (!gpsEnabled || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            //---------------------------------aqui va el dialog para permiso---------------//
+            //comprobamos si esta activado el gps
+            ubicacion = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            final boolean gpsEnabled = ubicacion.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("CONDICIONES DE USO");
-            View submit_order_layout = LayoutInflater.from(this).inflate(R.layout.permiso_gps_layout, null);
+            if (!gpsEnabled || (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
 
 
-            builder.setView(submit_order_layout);
-            builder.setNegativeButton("CANCELAR:", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("CONDICIONES DE USO");
+                View submit_order_layout = LayoutInflater.from(this).inflate(R.layout.permiso_gps_layout, null);
 
 
-                    if (!gpsEnabled) {
-                        Intent settingIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(settingIntent);
-
-
+                builder.setView(submit_order_layout);
+                builder.setNegativeButton("CANCELAR:", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
+                }).setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                    //comprobamos si está habilitado los permisos de gps segun versión mayor a api 23
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                            ActivityCompat.requestPermissions(CartActivity.this, new String[]{
-                                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-                            }, 1000);
+                        if (!gpsEnabled) {
+                            Intent settingIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(settingIntent);
 
 
                         }
 
+                        //comprobamos si está habilitado los permisos de gps segun versión mayor a api 23
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                ActivityCompat.requestPermissions(CartActivity.this, new String[]{
+                                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+                                }, 1000);
+
+
+                            }
+
+                        }
+
                     }
+                });
+                builder.show();
 
-                }
-            });
-            builder.show();
+            }
+            //----------------------------------esto es el fin------------------------------//
 
-        }
-        //----------------------------------esto es el fin------------------------------//
 
         //para realizar pedido
 
-        btn_cart_pedido = findViewById(R.id.btn_cart_pedir);
-        if (Common.cartRepository.sumPrecio() == 0) {
-            btn_cart_pedido.setEnabled(false);
-        }
-        btn_cart_pedido.setOnClickListener(v-> {
+            btn_cart_pedido = findViewById(R.id.btn_cart_pedir);
+            if (Common.cartRepository.sumPrecio() == 0) {
+                btn_cart_pedido.setEnabled(false);
+            }
+            btn_cart_pedido.setOnClickListener(v-> {
 
                 enviarOrden();
                 //eliminamos productos agregados al carrito
@@ -186,13 +239,25 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                 //finish();
 
 
-        });
+            });
 
-        //INICIA LOS LAYOUT
-        rootLayout = findViewById(R.id.rootLayout);
+            //INICIA LOS LAYOUT
+            rootLayout = findViewById(R.id.rootLayout);
 
-        //metodo para correr elementos de carrito
-        loadCartElemntos();
+            //metodo para correr elementos de carrito
+            loadCartElemntos();
+
+ /*       }else{
+            Intent intent =  new Intent(CartActivity.this,MainActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+            finish();
+
+        }
+*/
+
+
 
 
     }
@@ -259,10 +324,12 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         Toast.makeText(CartActivity.this, "longitud"+longitude, Toast.LENGTH_SHORT).show();*/
 
 
-        //mostrar dialog
+        //mostrar dialog envio de pedido y pago
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Su Pedido");
+        builder.setTitle("Forma de Pago");
+        builder.setTitle("Total BS."+Common.cartRepository.sumPrecio());
+
         View submit_order_layout = LayoutInflater.from(this).inflate(R.layout.submit_order_layout, null);
 
         final EditText edt_comment = submit_order_layout.findViewById(R.id.edt_comentario);
@@ -291,6 +358,20 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
             }
         });
 
+        btnUpload = submit_order_layout.findViewById(R.id.btn_upload);
+        txt_nombrePDF = submit_order_layout.findViewById(R.id.txt_nombrePDF);
+        imageViewPDF = submit_order_layout.findViewById(R.id.pdf_view);
+        //event
+        btnUpload.setOnClickListener((v) -> {
+
+                chooseFile();
+
+        });
+
+        //---------end upload file
+
+
+
 
         builder.setView(submit_order_layout);
         builder.setNegativeButton("CANCELAR:", new DialogInterface.OnClickListener() {
@@ -301,22 +382,30 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         }).setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+
+
+
+
+
                 //probamos conexion de internet
                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-                    //proceso al enviar pedido
-                    final String orderComment = edt_comment.getText().toString();
-                    final String orderAddress;
-                    if (rdi_user_address.isChecked()) {
-                        //poner de la tabla usuario la direccion,
-                        orderAddress = Common.currentUser.getDireccion();
-                        //orderAddress = "mi direccion calle los pardos";
-                    } else if (rdi_other_address.isChecked()) {
-                        orderAddress = edt_other_address.getText().toString();
-                    } else {
-                        orderAddress = "";
-                    }
+
+                    if(tokenManager.verificarSesion()){
+                        //proceso al enviar pedido
+                        final String orderComment = edt_comment.getText().toString();
+                        final String orderAddress;
+                        if (rdi_user_address.isChecked()) {
+                            //poner de la tabla usuario la direccion,
+                            orderAddress = Common.currentUser.getDireccion();
+                            //orderAddress = "mi direccion calle los pardos";
+                        } else if (rdi_other_address.isChecked()) {
+                            orderAddress = edt_other_address.getText().toString();
+                        } else {
+                            orderAddress = "";
+                        }
 
 
 
@@ -324,29 +413,33 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     /*final String latitude = String.valueOf(location.getLatitude());
                     final String longitude = String.valueOf(location.getLongitude());*/
 
-                    final String latitude = "sinconexion";
-                    final String longitude = "sinconexion";
+                        final String latitude = "sinconexion";
+                        final String longitude = "sinconexion";
 
-                    Toast.makeText(CartActivity.this, "latitud"+latitude, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(CartActivity.this, "longitud"+longitude, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CartActivity.this, "latitud"+latitude, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CartActivity.this, "longitud"+longitude, Toast.LENGTH_SHORT).show();
 
-                    //insertamos fecha y hora del dispositivo
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                    final String currentDate= simpleDateFormat.format(new Date());
-                    final String currentTime = simpleDateFormat2.format(new Date());
+                        //insertamos fecha y hora del dispositivo
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd"  );
+                        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm:ss" , Locale.getDefault());
+                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/La_Paz"));
+                        simpleDateFormat2.setTimeZone(TimeZone.getTimeZone("America/La_Paz"));
+                        String currentDate= simpleDateFormat.format(new Date());
+                        String currentTime = simpleDateFormat2.format(new Date());
 
-                    //declarar estado
-                    //final String estado = "proceso";
-                    final int idcliente=0;
+                        //declarar estado
+                        //final String estado = "proceso";
+                        final int idcliente=0;
 
 
 
-                    compositeDisposable.add(
-                            Common.cartRepository.getCartItem()
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeOn(Schedulers.io())
-                                    .subscribe(Cart -> {
+
+
+                        compositeDisposable.add(
+                                Common.cartRepository.getCartItem()
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe(Cart -> {
 
                                             if(!TextUtils.isEmpty(orderAddress)) {
 
@@ -359,22 +452,45 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                                                 .subscribeOn(Schedulers.io())
                                                                 .subscribe(Cliente ->{
 
-                                                                        Common.currentCliente = Cliente;
+                                                                    Common.currentCliente = Cliente;
 
-                                                                        if(Common.currentCliente.getIdcliente()>0 )
+                                                                    if(Common.currentCliente.getIdcliente()>0 )
+                                                                    {
+                                                                        //Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
+
+                                                                        //==================================================================================================================
+                                                                        //upload PDF y pedido
+
+
+                                                                        if(selectedFileUri != null)
                                                                         {
-                                                                            Toast.makeText(CartActivity.this, "el ID cliente ========>>"+Common.currentCliente.getIdcliente(), Toast.LENGTH_SHORT).show();
 
-                                                                            //==================================================================================================================
-                                                                            //guardar pedido al servidor
-                                                                            GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio());
 
-                                                                            //===================================================================================================================
+                                                                            File file = FileUtils.getFile(CartActivity.this, selectedFileUri);
+                                                                            RequestBody requestFile = RequestBody.create(MediaType.parse("application/pdf"), file);
+                                                                            //ProgressRequestBody requestFile = new ProgressRequestBody(file, this);
+
+                                                                            //RequestBody requestFile = RequestBody.create(MediaType.parse("application/pdf"), file);
+                                                                            Log.d("ARCHIVO"+requestFile,"ARCHIVO");
+
+                                                                            final MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(),requestFile);
+
+
+                                                                            GuardarPedidoToServer(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio(), body);
+
+
 
                                                                         }else{
-                                                                            Toast.makeText(CartActivity.this, "no hay nada en id cliente", Toast.LENGTH_SHORT).show();
+                                                                            Toast.makeText(CartActivity.this, "Adjuntar pdf/imagen", Toast.LENGTH_SHORT).show();
+
 
                                                                         }
+                                                                        //===================================================================================================================
+
+                                                                    }else{
+                                                                        Toast.makeText(CartActivity.this, "No hay  id cliente", Toast.LENGTH_SHORT).show();
+
+                                                                    }
 
 
 
@@ -427,16 +543,26 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                             //Common.cartRepository.emptyCart();
 
 
-                                    }, throwable -> {Toast.makeText(CartActivity.this, "[OBTENER TODO DE CART]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();})
+                                        }, throwable -> {Toast.makeText(CartActivity.this, "[OBTENER TODO DE CART]"+throwable.getMessage(), Toast.LENGTH_SHORT).show();})
 
-                    );
+                        );
 
-                    //eliminamos productos agregados al carrito
-                    //Common.cartRepository.emptyCart();
-                    //cambiamos de actividad
-                    //startActivity(new Intent(CartActivity.this,HomeActivity.class));
-                    //finish();
-                    //Common.cartRepository.emptyCart();
+                        //eliminamos productos agregados al carrito
+                        //Common.cartRepository.emptyCart();
+                        //cambiamos de actividad
+                        //startActivity(new Intent(CartActivity.this,HomeActivity.class));
+                        //finish();
+                        //Common.cartRepository.emptyCart();
+
+                    }else{
+                        Intent intent =  new Intent(CartActivity.this,MainActivity.class);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+
+                        finish();
+                    }
+
+
 
                 }else {
                     Toast.makeText(CartActivity.this, "No tiene acceso a datos de  internet", Toast.LENGTH_SHORT).show();
@@ -446,6 +572,8 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
 
             }
+
+
         });
 
         AlertDialog dialog =  builder.show();
@@ -468,11 +596,80 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
 
 
-    private void GuardarPedidoToServer(String latitude, String longitude, String currentDate, String currentTime,  int idcliente, String orderComment, String orderAddress, double precio) {
+    //ctrl+o
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case REQUEST_PERMISSION_CODE:
+            {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    Toast.makeText(this,  "Permiso concedido", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK)
+        {
+            if(requestCode == PICK_FILE_REQUEST)
+            {
+                if(data != null)
+                {
+
+                    selectedFileUri = data.getData();
+                    File file = FileUtils.getFile(this, selectedFileUri);
+                    //Log.d(String.valueOf(file.getName()) ,"PDF_FILE");
+
+                    if(selectedFileUri != null && !selectedFileUri.getPath().isEmpty())
+                        //imageViewPDF.setImageURI(selectedFileUri);
+                        txt_nombrePDF.setText(String.valueOf(file.getName()).toString() );
+
+                    else
+                        Toast.makeText(this, "No se puede subir archivo al servidor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void chooseFile() {
+        //upload file -----
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, REQUEST_PERMISSION_CODE);
+        }else{
+            Intent intent = new Intent();
+            //intent.setAction(Intent.ACTION_GET_CONTENT);
+            //intent = Intent.createChooser(FileUtils.createGetContentIntent( ).setType("application/pdf") ,"select PDF/image");
+            intent = Intent.createChooser(FileUtils.createGetContentIntent( ).setType("*/*") ,"select PDF/image");
+            startActivityForResult(intent, PICK_FILE_REQUEST);
+
+            
+
+        }
+
+    }
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+        progressDialog.setProgress(percentage);
+    }
+
+
+    private void GuardarPedidoToServer(String latitude, String longitude, String currentDate, String currentTime, int idcliente, String orderComment, String orderAddress, double precio, MultipartBody.Part body) {
 
 
         compositeDisposable.add(
-                mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio())
+                mService.createPedido(latitude, longitude,currentDate,currentTime, Common.currentCliente.getIdcliente(), orderComment, orderAddress, Common.cartRepository.sumPrecio(), body)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(Pedido ->{
@@ -547,8 +744,12 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                             if(Common.currentPedidoProducto.get(0).getIdpedidoproducto()>0){
                                 Toast.makeText(CartActivity.this, "Pedido enviado", Toast.LENGTH_SHORT).show();
 
-
-                                        //Common.cartRepository.emptyCart(carts.get(0).id);
+                                // Envío de notification al admin de pedido nuevo
+                                String notification_pedido = "pedido realizado";
+                                mSocket.emit("sendNotification",notification_pedido);
+                                //Common.cartRepository.emptyCart(carts.get(0).id);
+                                startActivity(new Intent(CartActivity.this,HomeActivity.class));
+                                finish();
 
 
 
@@ -630,33 +831,6 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         recycler_cart.setAdapter(cartAdapter);
     }
 
-    //ctrl +o
-
-    @Override
-    protected void onDestroy() {
-        compositeDisposable.clear();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onStop() {
-        compositeDisposable.clear();
-        super.onStop();
-    }
-
-
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(Common.cartRepository.sumPrecio()==0)
-        {
-            btn_cart_pedido.setEnabled(false);
-        }
-        loadCartElemntos();
-
-    }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
@@ -690,4 +864,38 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
             snackbar.show();
         }
     }
+
+
+    //ctrl +o
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.clear();
+        mSocket.disconnect();
+        mSocket.off("sentNotification");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        compositeDisposable.clear();
+        super.onStop();
+    }
+
+
+
+
+    @Override
+    protected void onResume() {
+
+        if(Common.cartRepository.sumPrecio()==0)
+        {
+            btn_cart_pedido.setEnabled(false);
+        }
+        loadCartElemntos();
+        super.onResume();
+    }
+
+
+
 }

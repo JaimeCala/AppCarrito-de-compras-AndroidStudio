@@ -1,7 +1,10 @@
 package com.example.jaime.homeserviceoficial;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,7 +24,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.example.jaime.homeserviceoficial.Adapter.CategoriaAdapter;
+import com.example.jaime.homeserviceoficial.Adapter.CategoriaProductoAdapter;
 import com.example.jaime.homeserviceoficial.Adapter.ImgCategoriaAdapter;
 import com.example.jaime.homeserviceoficial.Database.DataSource.CartRepository;
 import com.example.jaime.homeserviceoficial.Database.DataSource.FavoriteRepository;
@@ -29,7 +36,9 @@ import com.example.jaime.homeserviceoficial.Database.Local.CartDataSource;
 
 import com.example.jaime.homeserviceoficial.Database.Local.FavoriteDataSource;
 import com.example.jaime.homeserviceoficial.Database.Local.JCMRoomCartDatabase;
+import com.example.jaime.homeserviceoficial.Model.Banner;
 import com.example.jaime.homeserviceoficial.Model.Categoria;
+import com.example.jaime.homeserviceoficial.Model.CategoriaProducto;
 import com.example.jaime.homeserviceoficial.Model.ImgCategoria;
 import com.example.jaime.homeserviceoficial.Retrofit.ICarritoShopAPI;
 import com.example.jaime.homeserviceoficial.TokenManager.TokenManager;
@@ -37,6 +46,7 @@ import com.example.jaime.homeserviceoficial.Utils.Common;
 import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -58,61 +68,126 @@ public class HomeActivity extends AppCompatActivity
     NotificationBadge badge;
     ImageView cart_icon;
 
-    TokenManager manager ;
+
+    private TokenManager tokenManager;
+
+    SliderLayout sliderLayout;
+    String url= "api/banner/";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        setTitle("Categorias");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-
-        mService = Common.getAPI();
-
-        lst_categoria_menu = (RecyclerView) findViewById(R.id.recyclerview_categoria_id);
-        lst_categoria_menu.setLayoutManager(new GridLayoutManager(this,2));
-        lst_categoria_menu.setHasFixedSize(true);
-
+        //probamos conexion a internet
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()){
+            setContentView(R.layout.activity_home);
+            setTitle("Categorias");
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+            mService = Common.getAPI();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+            sliderLayout = findViewById(R.id.slader_banner);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+            lst_categoria_menu = (RecyclerView) findViewById(R.id.recyclerview_categoria_id);
+            lst_categoria_menu.setLayoutManager(new GridLayoutManager(this,2));
+            lst_categoria_menu.setHasFixedSize(true);
+
+            tokenManager = new TokenManager(getApplicationContext());
 
 
-        //poner datos donde icono del usuario
-        View headerView = navigationView.getHeaderView(0);
-        txt_nombre = (TextView) headerView.findViewById(R.id.txt_nombreHeader);
-        txt_correo = (TextView) headerView.findViewById(R.id.txt_correoHeader);
 
-        //colocamos los datos en el header
-        txt_nombre.setText(Common.currentUser.getNombre());
-        txt_correo.setText(Common.currentUser.getEmail());
 
-        //categoria menu
-        getCategoriaMenu();
-        
-        //init database room 
-        initDB();
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            });
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+
+
+            //poner datos donde icono del usuario
+            View headerView = navigationView.getHeaderView(0);
+            txt_nombre = (TextView) headerView.findViewById(R.id.txt_nombreHeader);
+            txt_correo = (TextView) headerView.findViewById(R.id.txt_correoHeader);
+
+            //colocamos los datos en el header
+        /*txt_nombre.setText(Common.currentUser.getNombre());
+        txt_correo.setText(Common.currentUser.getEmail());*/
+
+            //get banner
+            getBannerImagen();
+
+            //categoria menu
+            getCategoriaMenu();
+
+
+
+            //init database room
+            initDB();
+
+        }else{
+            Toast.makeText(HomeActivity.this, "No tiene acceso a datos de  internet", Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
+
+    
+
+    private void getBannerImagen() {
+        compositeDisposable.add(mService.getBanner()
+            .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Banner>>() {
+                    @Override
+                    public void accept(List<Banner> banners) throws Exception {
+                        displayImageBanner(banners);
+                    }
+                })
+                );
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
+    }
+
+    private void displayImageBanner(List<Banner> banners) {
+        HashMap<String,String> bannerMap = new HashMap<>();
+        for(Banner item:banners)
+            bannerMap.put(item.getLinkimgbanner(), Common.BASE_URL+url+ item.getNombreimgbanner());
+
+        for(String name:bannerMap.keySet())
+        {
+            TextSliderView textSliderView = new TextSliderView(this);
+            textSliderView
+                    //.description(name)
+                    .image(bannerMap.get(name))
+                    .setScaleType(BaseSliderView.ScaleType.Fit);
+            sliderLayout.addSlider(textSliderView);
+        }
+    }
+
 
     private void initDB() {
         Common.jcmRoomCartDatabase = JCMRoomCartDatabase.getInstance(this);
@@ -221,40 +296,61 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_historial) {
             startActivity(new Intent(HomeActivity.this,HistorialActivity.class));
 
+        } else if (id == R.id.nav_login) {
+
+            startActivity(new Intent(HomeActivity.this,MainActivity.class));
+
         } else if (id == R.id.nav_favorite) {
 
             startActivity(new Intent(HomeActivity.this,FavoriteActivity.class));
 
+        } else if (id == R.id.nav_oferta) {
+
+            startActivity(new Intent(HomeActivity.this,Oferta_Activity.class));
+
+        } else if (id == R.id.nav_reclamo) {
+
+            startActivity(new Intent(HomeActivity.this,ReclamoActivity.class));
+
         } else if (id == R.id.nav_salir_sesion) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Salir de la aplicación");
-            builder.setMessage("Estas seguro de salir de la aplicación ?");
+            if(tokenManager.verificarSesion()){
 
-            builder.setNegativeButton("SI", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Salir de la aplicación");
+                builder.setMessage("Estas seguro de salir de la aplicación ?");
 
-
-                    manager.cerrarSesion();
-
-                    //limpiar todas la actividad
-                    Intent intent = new Intent(HomeActivity.this,MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
+                builder.setNegativeButton("SI", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
 
-                }
-            });
-            builder.setPositiveButton("CANCELAR", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+                        tokenManager.cerrarSesion();
 
-            builder.show();
+                        //limpiar todas la actividad
+                        Intent intent = new Intent(HomeActivity.this,MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+
+
+                    }
+                });
+                builder.setPositiveButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.show();
+
+            }else{
+                Toast.makeText(this, "Inicie sesion o regístrese por favor!", Toast.LENGTH_SHORT).show();
+
+            }
+
+
 
         }
 

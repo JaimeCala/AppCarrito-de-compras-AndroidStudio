@@ -70,4 +70,15 @@ public class ProductoActivity extends AppCompatActivity {
         super.onPostResume();
 
     }
+    /*@Override
+    protected void onDestroy() {
+        compositeDisposable.clear();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        compositeDisposable.clear();
+        super.onStop();
+    }*/
 }

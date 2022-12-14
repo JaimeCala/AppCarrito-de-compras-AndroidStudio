@@ -1,6 +1,9 @@
 package com.example.jaime.homeserviceoficial;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +20,7 @@ import com.example.jaime.homeserviceoficial.Database.ModelDB.Favorite;
 import com.example.jaime.homeserviceoficial.Model.Historial;
 import com.example.jaime.homeserviceoficial.Model.Users;
 import com.example.jaime.homeserviceoficial.Retrofit.ICarritoShopAPI;
+import com.example.jaime.homeserviceoficial.TokenManager.TokenManager;
 import com.example.jaime.homeserviceoficial.Utils.Common;
 
 import java.util.List;
@@ -41,6 +45,8 @@ public class HistorialActivity extends AppCompatActivity {
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    private TokenManager tokenManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +56,30 @@ public class HistorialActivity extends AppCompatActivity {
         mService = Common.getAPI();
         //rootLayout = findViewById(R.id.rootLayout);
 
+        tokenManager = new TokenManager(getApplicationContext());
+
         listahistorial = (RecyclerView) findViewById(R.id.recyclerview_historial_id);
         listahistorial.setLayoutManager(new LinearLayoutManager(this));
         listahistorial.setHasFixedSize(true);
 
-        loadHistorialItem(Common.currentUser.getIdusuario());
+        //probamos conexion de internet
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()){
+
+            if(tokenManager.verificarSesion()){
+                loadHistorialItem(Common.currentUser.getIdusuario());
+            }else{
+                startActivity(new Intent(HistorialActivity.this,MainActivity.class));
+                finish();
+
+            }
+
+        }else{
+            Toast.makeText(HistorialActivity.this, "No tiene acceso a datos de  internet", Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
 

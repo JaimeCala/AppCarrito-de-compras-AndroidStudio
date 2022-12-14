@@ -69,6 +69,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaViewHolder> 
                     //.load(url+categoriaList.get(position).getNombreimgcategoria())
                     .load(Common.BASE_URL+url+arrayList.get(i).getNombreimgcategoria())
 
+
                     .into(holder.img_categoria);
         }
 

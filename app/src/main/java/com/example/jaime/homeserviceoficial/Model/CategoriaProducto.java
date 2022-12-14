@@ -25,6 +25,10 @@ public class CategoriaProducto {
     @Expose
     private String produdescripcion;
 
+    @SerializedName("produstock")
+    @Expose
+    private int produstock;
+
     @SerializedName("produprecio")
     @Expose
     private Double produprecio;
@@ -32,6 +36,14 @@ public class CategoriaProducto {
     @SerializedName("produpeso")
     @Expose
     private Double produpeso;
+
+    @SerializedName("produoferta")
+    @Expose
+    private String produoferta;
+
+    @SerializedName("produporcentaje")
+    @Expose
+    private Double produporcentaje;
 
     @SerializedName("imgidprodu")
     @Expose
@@ -49,14 +61,17 @@ public class CategoriaProducto {
     @Expose
     private String univalor;
 
-    public CategoriaProducto(int categoria_idcategoria, String categoria_nombre, int idprodu, String produnombre,String produdescripcion, Double produprecio, Double produpeso, int imgidprodu, String imgnombreprodu, int iduniprodu, String univalor) {
+    public CategoriaProducto(int categoria_idcategoria, String categoria_nombre, int idprodu, String produnombre, String produdescripcion, int produstock , Double produprecio, Double produpeso, String produoferta, Double produporcentaje, int imgidprodu, String imgnombreprodu, int iduniprodu, String univalor) {
         this.categoria_idcategoria = categoria_idcategoria;
         this.categoria_nombre = categoria_nombre;
         this.idprodu = idprodu;
         this.produnombre = produnombre;
-        this.produdescripcion=produdescripcion;
+        this.produdescripcion = produdescripcion;
+        this.produstock = produstock;
         this.produprecio = produprecio;
         this.produpeso = produpeso;
+        this.produoferta = produoferta;
+        this.produporcentaje = produporcentaje;
         this.imgidprodu = imgidprodu;
         this.imgnombreprodu = imgnombreprodu;
         this.iduniprodu = iduniprodu;
@@ -103,6 +118,14 @@ public class CategoriaProducto {
         this.produdescripcion = produdescripcion;
     }
 
+    public int getProdustock() {
+        return produstock;
+    }
+
+    public void setProdustock(int produstock) {
+        this.produstock = produstock;
+    }
+
     public Double getProduprecio() {
         return produprecio;
     }
@@ -117,6 +140,22 @@ public class CategoriaProducto {
 
     public void setProdupeso(Double produpeso) {
         this.produpeso = produpeso;
+    }
+
+    public String getProduoferta() {
+        return produoferta;
+    }
+
+    public void setProduoferta(String produoferta) {
+        this.produoferta = produoferta;
+    }
+
+    public Double getProduporcentaje() {
+        return produporcentaje;
+    }
+
+    public void setProduporcentaje(Double produporcentaje) {
+        this.produporcentaje = produporcentaje;
     }
 
     public int getImgidprodu() {

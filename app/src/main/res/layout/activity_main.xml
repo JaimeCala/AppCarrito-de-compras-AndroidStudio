@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
 
 
+
     tools:context=".MainActivity">
 
 
@@ -30,7 +31,7 @@
                 android:layout_alignParentTop="true"
 
                 android:layout_marginTop="26dp"
-                app:srcCompat="@drawable/homeservice" />
+                app:srcCompat="@mipmap/ic_logos" />
 
             <EditText
                 android:id="@+id/edtUsuario"
@@ -45,9 +46,10 @@
                 android:hint="Correo electrónico"
                 android:inputType="textPersonName" />
 
-            <EditText
+            <!--<EditText
                 android:id="@+id/edtContrasena"
                 android:layout_width="310dp"
+
                 android:layout_height="40dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="30dp"
@@ -56,7 +58,30 @@
                 android:drawableLeft="@drawable/ic_action_lock"
                 android:ems="10"
                 android:hint="Contraseña"
-                android:inputType="textPassword" />
+                android:inputType="textPassword" />-->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/edtContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:passwordToggleEnabled="true"
+
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="30dp"
+
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="310dp"
+                    android:layout_height="40dp"
+
+                    android:background="#91f0f0f7"
+                    android:drawableLeft="@drawable/ic_action_lock"
+                    android:ems="10"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    />
+            </android.support.design.widget.TextInputLayout>
 
 
 
