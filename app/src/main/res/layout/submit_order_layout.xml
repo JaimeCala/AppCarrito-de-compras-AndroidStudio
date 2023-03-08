@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="-Tigo Money:=> 77515177"
+        android:text="-Tigo Money:=> 73245730"
         android:textColor="#1537E4"
         android:textSize="15sp"
         >
@@ -28,7 +28,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="-Transferencia Banco Sol:=> 1919209-000-001"
+        android:text="-Transferencia Banco BCP:=> 201-51532402-3-13"
         android:textColor="#1537E4"
         android:textSize="15sp"
         >

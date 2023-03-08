@@ -18,10 +18,9 @@
 18    package="com.ipaulpro.afilechooser" >
 19
 20    <uses-sdk
-20-->C:\Users\Jaime\AndroidStudioProjects\AppHomeServiceOficial\aFileChooser\src\main\AndroidManifest.xml:20:5-44
 21        android:minSdkVersion="16"
-21-->C:\Users\Jaime\AndroidStudioProjects\AppHomeServiceOficial\aFileChooser\src\main\AndroidManifest.xml:20:15-41
+21-->C:\Users\jaime\AndroidStudioProjects\AppHomeServiceOficial\aFileChooser\src\main\AndroidManifest.xml
 22        android:targetSdkVersion="26" />
-22-->C:\Users\Jaime\AndroidStudioProjects\AppHomeServiceOficial\aFileChooser\src\main\AndroidManifest.xml:20:5-44
+22-->C:\Users\jaime\AndroidStudioProjects\AppHomeServiceOficial\aFileChooser\src\main\AndroidManifest.xml
 23
 24</manifest>

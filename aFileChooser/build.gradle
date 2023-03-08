@@ -8,6 +8,9 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 
     buildTypes {
         release {
