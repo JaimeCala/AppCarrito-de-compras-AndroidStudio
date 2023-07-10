@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.jaime.homeserviceoficial">
+    package="app.micromarket.marza.homeserviceoficial">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
     <application
         android:allowBackup="true"
@@ -16,13 +17,16 @@
         android:roundIcon="@mipmap/ic_logos_round"
         tools:replace="android:icon"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReclamoActivity"></activity>
-        <activity android:name=".Oferta_Activity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.ReclamoActivity"></activity>
+        <activity android:name="app.micromarket.marza.homeserviceoficial.Oferta_Activity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.MainActivity" />
         <activity
-            android:name=".HomeActivity"
+            android:name="app.micromarket.marza.homeserviceoficial.HomeActivity"
             android:label="@string/title_activity_home"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,13 +34,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProductoActivity" />
-        <activity android:name=".CartActivity" />
-        <activity android:name=".FavoriteActivity" />
-        <activity android:name=".HistorialActivity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.ProductoActivity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.CartActivity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.FavoriteActivity" />
+        <activity android:name="app.micromarket.marza.homeserviceoficial.HistorialActivity" />
 
         <activity
-            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:name="app.ipaulpro.afilechooser.FileChooserActivity"
             android:icon="@drawable/ic_chooser"
             android:enabled="@bool/use_activity"
             android:exported="true"

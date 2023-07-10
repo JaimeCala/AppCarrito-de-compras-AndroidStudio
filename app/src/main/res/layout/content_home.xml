@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".HomeActivity"
+    tools:context="app.micromarket.marza.homeserviceoficial.HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
 
@@ -37,7 +37,7 @@
                 android:layout_marginBottom="5dp"
                 />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_categoria_id"
                 android:scrollbars="none"
                 android:layout_marginLeft="8dp"

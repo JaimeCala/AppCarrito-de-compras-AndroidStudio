@@ -1,0 +1,26 @@
+package app.micromarket.marza.homeserviceoficial.Database.Local;
+
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import android.content.Context;
+
+import app.micromarket.marza.homeserviceoficial.Database.ModelDB.Cart;
+import app.micromarket.marza.homeserviceoficial.Database.ModelDB.Favorite;
+
+@Database(entities = {Cart.class, Favorite.class},version = 1, exportSchema = false)
+public abstract class JCMRoomCartDatabase extends RoomDatabase {
+
+    public abstract CartDAO cartDAO();
+    public abstract FavoriteDAO favoriteDAO();
+    private static JCMRoomCartDatabase instance;
+
+    public static JCMRoomCartDatabase getInstance(Context context)
+    {
+        if (instance == null)
+            instance = Room.databaseBuilder(context, JCMRoomCartDatabase.class,"CarritoShopDB")
+                    .allowMainThreadQueries()
+                    .build();
+        return instance;
+    }
+}

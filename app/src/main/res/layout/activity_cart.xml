@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".CartActivity">
+    tools:context="app.micromarket.marza.homeserviceoficial.CartActivity">
 
 
     <Spinner
@@ -39,7 +39,7 @@
         android:textSize="18sp"
         android:text="PEDIR" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cart"
         android:layout_above="@+id/spinner"
         android:layout_width="match_parent"

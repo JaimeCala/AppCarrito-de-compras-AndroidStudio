@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".ReclamoActivity">
+    tools:context="app.micromarket.marza.homeserviceoficial.ReclamoActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         android:layout_marginLeft="60dp"
         android:layout_marginBottom="40dp"/>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txt_reclamo_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,13 +28,13 @@
         app:counterMaxLength="150"
         >
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Comentario"
             android:maxLength="150"
             android:inputType="text"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_enviar_reclamo"
